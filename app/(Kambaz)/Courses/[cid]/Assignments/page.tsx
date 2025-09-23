@@ -11,7 +11,7 @@ export default function Assignments() {
                 ASSIGNMENTS 40% of Total <button>+</button> </h3>
             <ul id="wd-assignment-list">
                 <li className="wd-assignment-list-item">
-                    <Link href="/Courses/1234/Assignments/123"
+                    <Link href="/Courses/1234/Assignments/1"
                         className="wd-assignment-link" >
                         A1 - ENV + HTML
                     </Link>
@@ -21,7 +21,7 @@ export default function Assignments() {
                     </div>
                 </li>
                 <li className="wd-assignment-list-item">
-                    <Link href="/Courses/1234/Assignments/124"
+                    <Link href="/Courses/1234/Assignments/2"
                         className="wd-assignment-link" >
                         A2 - CSS + Bootstrap
                     </Link>
@@ -31,7 +31,7 @@ export default function Assignments() {
                     </div>
                 </li>
                 <li className="wd-assignment-list-item">
-                    <Link href="/Courses/1234/Assignments/125"
+                    <Link href="/Courses/1234/Assignments/3"
                         className="wd-assignment-link" >
                         A3 - JavaScript + React
                     </Link>
