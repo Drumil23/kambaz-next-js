@@ -11,10 +11,18 @@ import Float from "./Float";
 import GridLayout from "./GridLayout";
 import Flex from "./Flex";
 import ReactIcons from "./ReactIcons";
+import Container from "react-bootstrap/esm/Container";
+import BootstrapGrids from "./BootstrapGrids";
+import ScreenSizeLabel from "./ScreenSizeLabel";
+import BootstrapTables from "./BootstrapTables";
+import BootstrapLists from "./BootstrapLists";
+import BootstrapForms from "./BootstrapForms";
+import BootstrapNavigation from "./BootstrapNavigation";
 
 export default function Lab2() {
     return (
         <div id="wd-lab2">
+            <Container>
             <h2>Lab 2 - Cascading Style Sheets</h2>
             <h3>Styling with the STYLE attribute</h3>
             <p style={{
@@ -76,7 +84,7 @@ export default function Lab2() {
             <div>
                 <ForegroundColors />
             </div>
-
+            <br />
             <div>
                 <BackgroundColors />
             </div>
@@ -90,39 +98,64 @@ export default function Lab2() {
                     <Padding />
                 </div>
             </div>
-
-            <div>
+            <br />
+            <div>  
                 <Corners />
             </div>
-
+            <br />
             <div>
                 <Dimensions />
             </div>
-
+            <br />
             <div>
                 <Positions />
             </div>
-
+            <br />    
             <div>
                 <Zindex />
             </div>
-
+            <br />
             <div>
                 <Float />
             </div>
-
+            <br />
             <div>
                 <GridLayout />
             </div>
-
+            <br />
             <div>
                 <Flex />
             </div>
-
+            <br />
             <div>
                 <ReactIcons />
             </div>
-
+            <br />
+            <div>
+                <BootstrapGrids />
+            </div>
+            <br />
+            <div>
+                <ScreenSizeLabel />
+            </div>
+            <br />
+            <div>
+                <BootstrapTables />
+            </div>
+            <br />
+            <div>
+                <BootstrapLists />
+            </div>
+            <br />
+            <div>
+                <BootstrapForms />
+            </div>
+            <br />
+            <div>
+                <BootstrapNavigation />
+            </div>
+            <br />
+        </Container>
         </div>
     );
 }
