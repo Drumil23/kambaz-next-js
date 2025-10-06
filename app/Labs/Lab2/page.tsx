@@ -8,6 +8,9 @@ import Dimensions from "./Dimensions";
 import Positions from "./Positions";
 import Zindex from "./Zindex";
 import Float from "./Float";
+import GridLayout from "./GridLayout";
+import Flex from "./Flex";
+import ReactIcons from "./ReactIcons";
 
 export default function Lab2() {
     return (
@@ -106,6 +109,18 @@ export default function Lab2() {
 
             <div>
                 <Float />
+            </div>
+
+            <div>
+                <GridLayout />
+            </div>
+
+            <div>
+                <Flex />
+            </div>
+
+            <div>
+                <ReactIcons />
             </div>
 
         </div>
