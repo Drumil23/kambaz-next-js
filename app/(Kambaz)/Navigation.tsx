@@ -33,28 +33,28 @@ export default function KambazNavigation() {
       </ListGroupItem><br />
       <ListGroupItem className="border-0 bg-black text-center">
         <Link href="/Dashboard" id="wd-courses-link" className="text-white text-decoration-none">
-          <SlNotebook className="fs-1 text-white" />
+          <SlNotebook className="fs-1 text-danger" />
           <br />
           Courses
         </Link>
       </ListGroupItem><br />
       <ListGroupItem className="border-0 bg-black text-center">
         <Link href="/Calendar" id="wd-calendar-link" className="text-white text-decoration-none">
-          <IoCalendarOutline className="fs-1 text-white" />
+          <IoCalendarOutline className="fs-1 text-danger" />
           <br />
           Calendar
         </Link>
       </ListGroupItem><br />
       <ListGroupItem className="border-0 bg-black text-center">
         <Link href="/Inbox" id="wd-inbox-link" className="text-white text-decoration-none">
-          <BsInboxes className="fs-1 text-white" />
+          <BsInboxes className="fs-1 text-danger" />
           <br />
           Inbox
         </Link>
       </ListGroupItem><br />
       <ListGroupItem className="border-0 bg-black text-center">
         <Link href="/Labs" id="wd-labs-link" className="text-white text-decoration-none">
-          <GrDocumentTest className="fs-1 text-white" />
+          <GrDocumentTest className="fs-1 text-danger" />
           <br />
           Labs
         </Link>
