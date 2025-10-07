@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { Form } from "react-bootstrap";
 
 export default function Assignments() {
     return (
         <div id="wd-assignments">
-            <input placeholder="Search for Assignments"
+            <Form.Control placeholder="Search for Assignments"
                 id="wd-search-assignment" />
             <button id="wd-add-assignment-group">+ Group</button>
             <button id="wd-add-assignment">+ Assignment</button>
