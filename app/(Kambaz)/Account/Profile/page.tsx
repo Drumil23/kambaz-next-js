@@ -18,8 +18,8 @@ export default function Profile() {
       </FormControl><br />
       <Link id="wd-update-btn"
         href="/Account/Profile"
-        className="btn btn-primary w-100 mb-2">
-        Update Profile
+        className="btn btn-danger w-100 mb-2">
+        Signout
       </Link><br />
       <Link href="Signin" > Sign out </Link>
     </div>
