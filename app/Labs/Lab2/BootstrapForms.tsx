@@ -14,8 +14,8 @@ export default function BootstrapForms() {
             </div>
             <div id="wd-css-styling-dropdowns">
                 <h3>Dropdowns</h3>
-                <FormSelect>
-                    <option value="0" defaultChecked>Open this select menu</option>
+                <FormSelect defaultValue="0">
+                    <option value="0">Open this select menu</option>
                     <option value="1">One</option>
                     <option value="2">Two</option>
                     <option value="3">Three</option>
@@ -32,7 +32,7 @@ export default function BootstrapForms() {
             <div id="wd-css-styling-range-and-sliders">
                 <h3>Range</h3>
                 <FormLabel>Example range</FormLabel>
-                <FormRange min="0" max="5" step="0.5" />
+                <FormRange min={0} max={5} step={0.5} />
             </div>
             <div id="wd-css-styling-addons">
                 <h3>Addons</h3>
@@ -50,19 +50,19 @@ export default function BootstrapForms() {
                 <div id="wd-css-responsive-forms-1">
                     <h3>Responsive forms</h3>
                     <form>
-                        <Row className="mb-3" controlId="email1">
-                            <FormLabel column sm={2}> Email </FormLabel>
+                        <Row className="mb-3">
+                            <FormLabel column sm={2} htmlFor="email1"> Email </FormLabel>
                             <Col sm={10}>
-                                <FormControl type="email" defaultValue="Enter your NU email id" />
+                                <FormControl id="email1" type="email" defaultValue="Enter your NU email id" />
                             </Col>
                         </Row>
-                        <Row className="mb-3" controlId="password1">
-                            <FormLabel column sm={2}> Password </FormLabel>
+                        <Row className="mb-3">
+                            <FormLabel column sm={2} htmlFor="password1"> Password </FormLabel>
                             <Col sm={10}>
-                                <FormControl type="password" />
+                                <FormControl id="password1" type="password" />
                             </Col>
                         </Row>
-                        <Row className="mb-3" controlId="textarea2">
+                        <Row className="mb-3">
                             <FormLabel column sm={2}> Bio </FormLabel>
                             <Col sm={10}>
                                 <FormControl as="textarea" style={{ height: "100px" }} />

@@ -23,6 +23,14 @@ import Spreader from "./Spreader";
 import Destructing from "./Destructing";
 import FunctionDestructing from "./Destructing";
 import DestructingImports from "./DestructingImports";
+import Classes from "./Classes";
+import ClassesDynamic from "./ClassesDynamic";
+import Add from "./Add";
+import Square from "./Square";
+import Highlight from "./Highlight";
+import PathParameters from "./PathParameters";
+import TodoItem from "./todos/TodoItem";
+
 export default function Lab3() {
   return (
     <div id="wd-lab3">
@@ -52,5 +60,20 @@ export default function Lab3() {
       <Destructing />
       <FunctionDestructing />
       <DestructingImports />
+      <Classes />
+      <ClassesDynamic />
+      <Add a={3} b={4} />
+      <h4>Square of 4</h4>
+      <Square>4</Square>
+      <hr />
+      <Highlight>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipitratione eaque illo minus cum, saepe totam
+        vel nihil repellat nemo explicabo excepturi consectetur. Modi omnis minus sequi maiores, provident voluptates.
+      </Highlight>
+      <PathParameters /> <hr />
+      <TodoItem />
+      <TodoItem todo={{ done: false, title: 'Walk the dog', status: 'PENDING' }} />
+      <TodoItem todo={{ done: false, title: 'Write code', status: 'DEFERRED' }} />
     </div>
-);}
+  );
+}

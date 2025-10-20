@@ -166,7 +166,7 @@ export default function Lab1() {
         Loading an image from the internet: <br />
         <Image
           id="wd-starship"
-          src="https://www.staradvertiser.com/wp-content/uploads/2021/08/web1_Starship-gap2.jpg"
+          src="https://cdn.arstechnica.net/wp-content/uploads/2022/02/Starship-Feb-10-2022-5435.jpg"
           alt="SpaceX Starship"
           width={400}
           height={267}
