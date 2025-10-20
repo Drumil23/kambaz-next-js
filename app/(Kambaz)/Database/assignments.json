@@ -1,0 +1,101 @@
+[
+  {
+    "_id": "A101",
+    "title": "Propulsion Assignment",
+    "course": "RS101",
+    "description": "Analysis of rocket propulsion systems",
+    "points": 100,
+    "dueDate": "2025-11-01",
+    "availableFrom": "2025-10-15",
+    "type": "Assignment",
+    "status": "PUBLISHED"
+  },
+  {
+    "_id": "A102",
+    "title": "Combustion Analysis",
+    "course": "RS101",
+    "description": "Detailed study of rocket engine combustion processes",
+    "points": 150,
+    "dueDate": "2025-11-15",
+    "availableFrom": "2025-10-20",
+    "type": "Project",
+    "status": "PUBLISHED"
+  },
+  {
+    "_id": "A103",
+    "title": "Nozzle Design Project",
+    "course": "RS101",
+    "description": "Design and optimization of rocket nozzle configurations",
+    "points": 200,
+    "dueDate": "2025-12-01",
+    "availableFrom": "2025-10-25",
+    "type": "Project",
+    "status": "DRAFT"
+  },
+  {
+    "_id": "A201",
+    "title": "Aerodynamics Quiz",
+    "course": "RS102",
+    "description": "Basic principles of aerodynamics",
+    "points": 50,
+    "dueDate": "2025-11-05",
+    "availableFrom": "2025-10-22",
+    "type": "Quiz",
+    "status": "PUBLISHED"
+  },
+  {
+    "_id": "A202",
+    "title": "Flow Analysis",
+    "course": "RS102",
+    "description": "Computational fluid dynamics analysis",
+    "points": 100,
+    "dueDate": "2025-11-20",
+    "availableFrom": "2025-10-25",
+    "type": "Assignment",
+    "status": "PUBLISHED"
+  },
+  {
+    "_id": "A203",
+    "title": "Heating Analysis",
+    "course": "RS102",
+    "description": "Thermal analysis of rocket components",
+    "points": 150,
+    "dueDate": "2025-12-05",
+    "availableFrom": "2025-11-01",
+    "type": "Project",
+    "status": "DRAFT"
+  },
+  {
+    "_id": "A301",
+    "title": "Structural Design Task",
+    "course": "RS103",
+    "description": "Structural analysis and design principles",
+    "points": 100,
+    "dueDate": "2025-11-10",
+    "availableFrom": "2025-10-20",
+    "type": "Assignment",
+    "status": "PUBLISHED"
+  },
+  {
+    "_id": "A302",
+    "title": "Orbital Calculations",
+    "course": "RS103",
+    "description": "Orbital mechanics and trajectory planning",
+    "points": 125,
+    "dueDate": "2025-11-25",
+    "availableFrom": "2025-10-30",
+    "type": "Assignment",
+    "status": "PUBLISHED"
+  },
+  {
+    "_id": "A303",
+    "title": "Systems Engineering Exam",
+    "course": "RS103",
+    "description": "Comprehensive systems engineering principles",
+    "points": 200,
+    "dueDate": "2025-12-10",
+    "availableFrom": "2025-11-05",
+    "type": "Exam",
+    "status": "DRAFT"
+  }
+]

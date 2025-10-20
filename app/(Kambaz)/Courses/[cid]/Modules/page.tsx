@@ -39,7 +39,9 @@ export default function Modules() {
                     <ListGroupItem key={lesson.id ?? lesson.name} className="wd-lesson p-3 ps-1">
                       <BsGripVertical className="me-2 fs-3" /> {lesson.name} <LessonControlButtons />
                     </ListGroupItem>
-                  ))}</ListGroup>)}</ListGroupItem>))}
+                  ))}
+                </ListGroup>)}
+            </ListGroupItem>))}
       </ListGroup>
     </div>
   );

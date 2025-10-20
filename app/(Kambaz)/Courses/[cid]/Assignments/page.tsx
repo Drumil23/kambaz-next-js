@@ -1,52 +1,47 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import { Form, Button, Card, Badge, InputGroup } from "react-bootstrap";
 import { FaPlus, FaSearch, FaRegCalendarAlt } from "react-icons/fa";
-import { BsThreeDotsVertical } from "react-icons/bs";
+import { BsThreeDotsVertical, BsGripVertical } from "react-icons/bs";
+import type { Assignment } from "../../../Database/types";
+import { assignments } from "../../../Database";
+import GreenCheckmark from "../Modules/GreenCheckmark";
+
+const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+    });
+};
 
 export default function Assignments() {
+    const { cid } = useParams();
     const [searchTerm, setSearchTerm] = useState("");
-    const [assignments] = useState([
-        {
-            id: 1,
-            title: "A1 - ENV + HTML",
-            availableFrom: "Oct 16, 2025 12:00am",
-            dueDate: "Oct 23, 2025 11:59pm",
-            points: 100,
-            modules: "Multiple Modules",
-            status: "upcoming"
-        },
-        {
-            id: 2,
-            title: "A2 - CSS + Bootstrap",
-            availableFrom: "Oct 23, 2025 12:00am",
-            dueDate: "Oct 30, 2025 11:59pm",
-            points: 100,
-            modules: "Multiple Modules",
-            status: "not-available"
-        },
-        {
-            id: 3,
-            title: "A3 - JavaScript + React",
-            availableFrom: "Oct 30, 2025 12:00am",
-            dueDate: "Nov 6, 2025 11:59pm",
-            points: 100,
-            modules: "Multiple Modules",
-            status: "not-available"
-        }
-    ]);
+    
+    const courseAssignments = assignments
+        .filter((assignment) => assignment.course === cid)
+        .sort((a, b) => 
+            new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+        ) as Assignment[];
 
-    const filteredAssignments = assignments.filter(assignment =>
-        assignment.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredAssignments = courseAssignments
+        .filter((assignment) =>
+            assignment.title.toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case 'upcoming':
-                return <Badge bg="warning" className="ms-2">Upcoming</Badge>;
-            case 'not-available':
-                return <Badge bg="secondary" className="ms-2">Not Available</Badge>;
+            case "PUBLISHED":
+                return <Badge bg="success" className="ms-2">Published</Badge>;
+            case "DRAFT":
+                return <Badge bg="secondary" className="ms-2">Draft</Badge>;
             default:
                 return null;
         }
@@ -99,31 +94,39 @@ export default function Assignments() {
                 <Card.Body className="p-0">
                     {filteredAssignments.map((assignment) => (
                         <Link
-                            key={assignment.id}
-                            href={`/Courses/1234/Assignments/${assignment.id}`}
+                            key={assignment._id}
+                            href={`/Courses/${cid}/Assignments/${assignment._id}`}
                             className="text-decoration-none"
                         >
                             <div className="border-bottom p-3 assignment-item">
                                 <div className="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 className="mb-2 text-primary">
-                                            {assignment.title}
-                                            {getStatusBadge(assignment.status)}
-                                        </h6>
-                                        <div className="text-secondary small">
-                                            <span className="me-3">
-                                                <FaRegCalendarAlt className="me-1" />
-                                                Available: {assignment.availableFrom}
-                                            </span>
-                                            <span className="me-3">
-                                                <strong>Due:</strong> {assignment.dueDate}
-                                            </span>
-                                            <Badge bg="info">{assignment.points} pts</Badge>
+                                    <div className="d-flex align-items-start">
+                                        <div className="me-3 text-secondary">
+                                            <BsGripVertical size={20} />
+                                        </div>
+                                        <div>
+                                            <h6 className="mb-2 text-primary">
+                                                {assignment.title}
+                                                {getStatusBadge(assignment.status)}
+                                            </h6>
+                                            <div className="text-secondary small">
+                                                <span className="me-3">
+                                                    <FaRegCalendarAlt className="me-1" />
+                                                    Available: {formatDate(assignment.availableFrom)}
+                                                </span>
+                                                <span className="me-3">
+                                                    <strong>Due:</strong> {formatDate(assignment.dueDate)}
+                                                </span>
+                                                <Badge bg="info">{assignment.points} pts</Badge>
+                                            </div>
                                         </div>
                                     </div>
-                                    <Badge bg="light" text="dark">
-                                        {assignment.modules}
-                                    </Badge>
+                                    <div className="d-flex align-items-center">
+                                        <Badge bg="light" text="dark" className="me-3">
+                                            {assignment.type}
+                                        </Badge>
+                                        {assignment.status === "PUBLISHED" && <GreenCheckmark />}
+                                    </div>
                                 </div>
                             </div>
                         </Link>
