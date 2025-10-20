@@ -24,10 +24,10 @@ const formatDate = (dateString: string): string => {
 export default function Assignments() {
     const { cid } = useParams();
     const [searchTerm, setSearchTerm] = useState("");
-    
+
     const courseAssignments = assignments
         .filter((assignment) => assignment.course === cid)
-        .sort((a, b) => 
+        .sort((a, b) =>
             new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
         ) as Assignment[];
 
