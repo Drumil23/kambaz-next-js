@@ -3,15 +3,18 @@ import { Button, ListGroupItem } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { deleteTodo, setTodo } from "./todosReducer";
 
-export default function TodoItem({
-    todo,
-}: {
-    todo: { id: string; title: string };
-}) {
+type Todo = { id: string; title: string };
+
+export default function TodoItem({ todo }: { todo: Todo }) {
     const dispatch = useDispatch();
+
     return (
-        <ListGroupItem key={todo.id} className="d-flex justify-content-between align-items-center">
+        <ListGroupItem
+            key={todo.id}
+            className="d-flex justify-content-between align-items-center"
+        >
             <div>{todo.title}</div>
+
             <div>
                 <Button
                     variant="primary"
@@ -21,6 +24,7 @@ export default function TodoItem({
                 >
                     Edit
                 </Button>
+
                 <Button
                     variant="danger"
                     onClick={() => dispatch(deleteTodo(todo.id))}
