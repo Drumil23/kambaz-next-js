@@ -1,0 +1,51 @@
+.container {
+  padding: 0.5rem;
+}
+.title {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.addBtn {
+  background-color: #198754; /* bootstrap success */
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.6rem;
+  border: none;
+  font-size: 1.25rem;
+}
+.arrayList {
+  margin-top: 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #fff;
+  padding: 0;
+}
+.arrayItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #eef0f2;
+  gap: 1rem;
+}
+.arrayItem:last-child {
+  border-bottom: none;
+}
+.itemNumber {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.deleteBtn {
+  background-color: #dc3545; /* bootstrap danger */
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.6rem;
+  border: none;
+  font-size: 1rem;
+}
+.deleteBtn:active,
+.deleteBtn:focus {
+  outline: none;
+  box-shadow: none;
+}

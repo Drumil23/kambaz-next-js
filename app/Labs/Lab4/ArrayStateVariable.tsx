@@ -1,20 +1,26 @@
-import { useState } from "react";
+import { useSelector } from "react-redux";
+import { ListGroup, ListGroupItem } from "react-bootstrap";
+import styles from "./ArrayStateVariable.module.css";
+import { RootState } from "./store";
+
+type Todo = { id: string; title: string };
+
 export default function ArrayStateVariable() {
- const [array, setArray] = useState([1, 2, 3, 4, 5]);
- const addElement = () => {
-   setArray([...array, Math.floor(Math.random() * 100)]);
- };
-const deleteElement = (index: number) => {
-   setArray(array.filter((item, i) => i !== index));
- };
- return (
-  <div id="wd-array-state-variables">
-   <h2>Array State Variable</h2>
-   <button onClick={addElement}>Add Element</button>
-   <ul>
-    {array.map((item, index) => (
-     <li key={index}> {item}
-      <button onClick={() => deleteElement(index)}>
-       Delete</button>
-     </li>))}
-   </ul><hr/></div>);}
+  const todos = useSelector((state: RootState) => state.todos.todos as Todo[]);
+
+  return (
+    <div id="wd-array-state-variables" className={styles.container}>
+      <h2 className={styles.title}>Array State Variable</h2>
+
+      <ListGroup className={styles.arrayList}>
+        {todos.map((todo: Todo) => (
+          <ListGroupItem key={todo.id} className={styles.arrayItem}>
+            <span className={styles.itemNumber}>{todo.title}</span>
+          </ListGroupItem>
+        ))}
+      </ListGroup>
+
+      <hr />
+    </div>
+  );
+}
