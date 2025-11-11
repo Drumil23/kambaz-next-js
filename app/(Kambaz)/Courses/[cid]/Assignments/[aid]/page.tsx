@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../../store";
 import { Form, Row, Col, Button, Card } from "react-bootstrap";
 import { updateAssignment, deleteAssignment } from "../../../Assignments/reducer";
-import type { Assignment } from "../../../Database/types";
+import type { Assignment } from "../../../../Database/types";
 
 export default function AssignmentEditor() {
   const { cid, aid } = useParams();
