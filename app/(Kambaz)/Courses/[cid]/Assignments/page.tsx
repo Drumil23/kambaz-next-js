@@ -2,12 +2,15 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { Form, Button, Card, Badge, InputGroup } from "react-bootstrap";
-import { FaPlus, FaSearch, FaRegCalendarAlt } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { Form, Button, Card, Badge, InputGroup, Modal } from "react-bootstrap";
+import { FaPlus, FaSearch, FaRegFileAlt, FaTrash } from "react-icons/fa";
 import { BsThreeDotsVertical, BsGripVertical } from "react-icons/bs";
 import type { Assignment } from "../../../Database/types";
-import { assignments } from "../../../Database";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../store";
 import GreenCheckmark from "../Modules/GreenCheckmark";
+import { deleteAssignment } from "../../Assignments/reducer";
 
 const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -24,8 +27,12 @@ const formatDate = (dateString: string): string => {
 export default function Assignments() {
     const { cid } = useParams();
     const [searchTerm, setSearchTerm] = useState("");
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedDeleteId, setSelectedDeleteId] = useState<string | null>(null);
+    const dispatch = useDispatch();
 
-    const courseAssignments = assignments
+    const allAssignments = useSelector((state: RootState) => state.assignmentsReducer.assignments) as Assignment[];
+    const courseAssignments = allAssignments
         .filter((assignment) => assignment.course === cid)
         .sort((a, b) =>
             new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
@@ -36,16 +43,21 @@ export default function Assignments() {
             assignment.title.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case "PUBLISHED":
-                return <Badge bg="success" className="ms-2">Published</Badge>;
-            case "DRAFT":
-                return <Badge bg="secondary" className="ms-2">Draft</Badge>;
-            default:
-                return null;
-        }
-    };
+    // small helper component: button that navigates to new assignment editor
+    function AddAssignmentButton({ cid }: { cid: string | undefined }) {
+        const router = useRouter();
+        return (
+            <button
+                type="button"
+                id="wd-add-assignment"
+                className="btn btn-danger d-flex align-items-center"
+                onClick={() => router.push(`/Courses/${cid}/Assignments/new`)}
+            >
+                <FaPlus className="me-2" />
+                Assignment
+            </button>
+        );
+    }
 
     return (
         <div id="wd-assignments" className="container-fluid p-4">
@@ -61,7 +73,7 @@ export default function Assignments() {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </InputGroup>
-                <div className="d-flex gap-2">
+                    <div className="d-flex gap-2">
                     <Button
                         variant="outline-secondary"
                         id="wd-add-assignment-group"
@@ -70,69 +82,81 @@ export default function Assignments() {
                         <FaPlus className="me-2" />
                         Group
                     </Button>
-                    <Button
-                        variant="danger"
-                        id="wd-add-assignment"
-                        className="d-flex align-items-center"
-                    >
-                        <FaPlus className="me-2" />
-                        Assignment
-                    </Button>
+                    <div className="d-flex gap-2">
+                        {/* use router push for reliable client navigation */}
+                        <AddAssignmentButton cid={Array.isArray(cid) ? cid[0] : cid} />
+                    </div>
                 </div>
             </div>
 
             <Card className="shadow-sm">
                 <Card.Header className="d-flex justify-content-between align-items-center bg-light py-3">
-                    <h5 className="mb-0" id="wd-assignments-title">
-                        ASSIGNMENTS
-                        <Badge bg="primary" className="ms-2">40% of Total</Badge>
-                    </h5>
-                    <Button variant="link" className="text-dark p-0">
-                        <BsThreeDotsVertical size={20} />
-                    </Button>
+                    <div className="d-flex align-items-center">
+                        <BsGripVertical className="me-2" />
+                        <h5 className="mb-0" id="wd-assignments-title">ASSIGNMENTS</h5>
+                        <Badge bg="primary" className="ms-3">40% of Total</Badge>
+                    </div>
+                    <div className="d-flex align-items-center">
+                        <Button variant="light" size="sm" className="me-2">
+                            <FaPlus />
+                        </Button>
+                        <Button variant="link" className="text-dark p-0">
+                            <BsThreeDotsVertical size={20} />
+                        </Button>
+                    </div>
                 </Card.Header>
                 <Card.Body className="p-0">
                     {filteredAssignments.map((assignment) => (
-                        <Link
-                            key={assignment._id}
-                            href={`/Courses/${cid}/Assignments/${assignment._id}`}
-                            className="text-decoration-none"
-                        >
-                            <div className="border-bottom p-3 assignment-item">
-                                <div className="d-flex justify-content-between align-items-start">
-                                    <div className="d-flex align-items-start">
-                                        <div className="me-3 text-secondary">
-                                            <BsGripVertical size={20} />
+                        <div key={assignment._id} className="border-bottom p-3 assignment-item">
+                            <div className="d-flex align-items-start">
+                                <div className="me-3 text-secondary"><BsGripVertical size={18} /></div>
+                                <div className="me-3 text-success"><FaRegFileAlt size={20} /></div>
+                                <div className="flex-grow-1">
+                                    <Link href={`/Courses/${cid}/Assignments/${assignment._id}`} className="text-decoration-none">
+                                        <h6 className="mb-1 text-primary">{assignment.title}</h6>
+                                        <div className="text-danger small">
+                                            {assignment.type} | Due {formatDate(assignment.dueDate)} | {assignment.points} pts
                                         </div>
-                                        <div>
-                                            <h6 className="mb-2 text-primary">
-                                                {assignment.title}
-                                                {getStatusBadge(assignment.status)}
-                                            </h6>
-                                            <div className="text-secondary small">
-                                                <span className="me-3">
-                                                    <FaRegCalendarAlt className="me-1" />
-                                                    Available: {formatDate(assignment.availableFrom)}
-                                                </span>
-                                                <span className="me-3">
-                                                    <strong>Due:</strong> {formatDate(assignment.dueDate)}
-                                                </span>
-                                                <Badge bg="info">{assignment.points} pts</Badge>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="d-flex align-items-center">
-                                        <Badge bg="light" text="dark" className="me-3">
-                                            {assignment.type}
-                                        </Badge>
-                                        {assignment.status === "PUBLISHED" && <GreenCheckmark />}
-                                    </div>
+                                    </Link>
+                                </div>
+                                <div className="d-flex align-items-center ms-3">
+                                    {assignment.status === "PUBLISHED" && <GreenCheckmark />}
+                                    <Button variant="link" className="text-dark p-0 ms-2"><BsThreeDotsVertical /></Button>
+                                    <Button
+                                        variant="link"
+                                        className="text-danger p-0 ms-2"
+                                        title="Delete assignment"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setSelectedDeleteId(assignment._id);
+                                            setShowDeleteModal(true);
+                                        }}
+                                    >
+                                        <FaTrash />
+                                    </Button>
                                 </div>
                             </div>
-                        </Link>
+                        </div>
                     ))}
                 </Card.Body>
             </Card>
+            <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Delete Assignment</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Are you sure you want to remove this assignment?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+                    <Button variant="danger" onClick={() => {
+                        if (selectedDeleteId) {
+                            dispatch(deleteAssignment(selectedDeleteId));
+                        }
+                        setShowDeleteModal(false);
+                        setSelectedDeleteId(null);
+                    }}>Delete</Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }
