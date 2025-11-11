@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, use } from "react";
+import { ReactNode } from "react";
 import CourseNavigation from "./Navigation";
 import { useSelector } from "react-redux";
 import { useParams } from "next/navigation";
