@@ -38,6 +38,11 @@ export default function AssignmentEditor() {
 
   const remove = () => {
     if (!confirm("Are you sure you want to delete this assignment?")) return;
+    if (!aidStr) {
+      // nothing to delete
+      router.push(`/Courses/${cidStr}/Assignments`);
+      return;
+    }
     dispatch(deleteAssignment(aidStr));
     router.push(`/Courses/${cidStr}/Assignments`);
   };
@@ -82,15 +87,7 @@ export default function AssignmentEditor() {
                 <Form.Label htmlFor="wd-available-from">Available From</Form.Label>
                 <Form.Control id="wd-available-from" type="date" value={form.availableFrom ?? ""} onChange={(e) => setForm({ ...form, availableFrom: e.target.value })} />
               </Col>
-              <Col md={3}>
-                <Form.Label htmlFor="wd-available-until">Available Until</Form.Label>
-                <Form.Control
-                  id="wd-available-until"
-                  type="date"
-                  value={form.availableUntil ?? ""}
-                  onChange={(e) => setForm({ ...form, availableUntil: e.target.value })}
-                />
-              </Col>
+              {/* Available Until removed - not part of Assignment model */}
             </Row>
           </Form>
         </Card.Body>
