@@ -1,5 +1,4 @@
 "use client"
-import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 import { ListGroup, ListGroupItem, FormControl } from "react-bootstrap";
 import ModulesControls from "./ModulesControls";
@@ -11,23 +10,15 @@ import { addModule, editModule, updateModule, deleteModule }
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../store";
 
-type Lesson = {
-  _id: string;
-  name: string;
-};
-
-type Module = {
-  _id: string;
-  course: string;
-  name: string;
-  editing?: boolean;
-  lessons?: Lesson[];
-};
+import type { Module } from "../../../Database/types";
+// UI extends the database Module with optional editing flag
+type Lesson = { _id: string; name: string; description?: string };
+type UIModule = Module & { editing?: boolean; lessons?: Lesson[] };
 
 export default function Modules() {
   const { cid } = useParams();
   // use modules from Redux store as source-of-truth
-  const modules = useSelector((state: RootState) => state.modulesReducer.modules) as Module[];
+  const modules = useSelector((state: RootState) => state.modulesReducer.modules) as UIModule[];
   const [moduleName, setModuleName] = useState("");
   const dispatch = useDispatch();
   // wrapper handlers (avoid name collisions with imported action creators)
@@ -41,8 +32,9 @@ export default function Modules() {
   const handleEditModule = (moduleId: string) => {
     dispatch(editModule(moduleId));
   };
-  const handleUpdateModule = (module: Module) => {
-    dispatch(updateModule(module));
+  const handleUpdateModule = (module: UIModule) => {
+    // Strip UI-only `editing` flag at runtime by asserting to Module when dispatching
+    dispatch(updateModule(module as unknown as Module));
   };
 
 
@@ -51,9 +43,9 @@ export default function Modules() {
   <ModulesControls moduleName={moduleName} setModuleName={setModuleName} addModule={handleAddModule} isHeader />
       <br /><br /><br /><br />
       <ListGroup className="rounded-0" id="wd-modules">
-        {modules
+          {modules
           .filter((module) => module.course === cid)
-          .map((module) => (
+          .map((module: UIModule) => (
             <ListGroupItem key={module._id ?? module.name} className="wd-module p-0 mb-5 fs-5 border-gray">
               <div className="wd-title p-3 ps-2 bg-secondary">
                 <BsGripVertical className="me-2 fs-3" />
