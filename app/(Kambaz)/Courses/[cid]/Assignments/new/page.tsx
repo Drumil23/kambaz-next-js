@@ -4,19 +4,19 @@ import { useParams, useRouter } from "next/navigation";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { addAssignment } from "../../../Assignments/reducer";
+import type { Assignment } from "../../../../Database/types";
 
 export default function NewAssignment() {
   const { cid } = useParams();
   const router = useRouter();
   const dispatch = useDispatch();
-  const [assignment, setAssignment] = useState<any>({
+  const [assignment, setAssignment] = useState<Partial<Assignment>>({
     title: "",
     description: "",
     points: 100,
     dueDate: "",
     availableFrom: "",
-    availableUntil: "",
-    course: cid as string,
+    course: (cid as string) ?? "",
     status: "DRAFT",
     type: "Assignment",
   });
@@ -60,11 +60,7 @@ export default function NewAssignment() {
         </Row>
 
         <Row className="mb-3">
-          <Col md={6}>
-            <Form.Label htmlFor="wd-available-until">Available Until</Form.Label>
-            <Form.Control id="wd-available-until" type="date" value={assignment.availableUntil} onChange={(e) => setAssignment({ ...assignment, availableUntil: e.target.value })} />
-          </Col>
-          <Col md={6} className="d-flex align-items-end gap-2">
+          <Col md={12} className="d-flex align-items-end gap-2">
             <Button variant="primary" id="wd-save-assignment" onClick={save}>Save</Button>
             <Button variant="secondary" id="wd-cancel-assignment" onClick={cancel}>Cancel</Button>
           </Col>

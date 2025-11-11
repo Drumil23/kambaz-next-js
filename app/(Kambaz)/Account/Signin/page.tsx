@@ -7,15 +7,16 @@ import { useState } from "react";
 import * as db from "../../Database";
 import { FormControl, Button } from "react-bootstrap";
 
+type Credentials = { username: string; password: string };
+type User = { loginId?: string; password?: string; [key: string]: unknown };
+
 export default function Signin() {
- const [credentials, setCredentials] = useState<any>({});
+ const [credentials, setCredentials] = useState<Credentials>({ username: "", password: "" });
  const dispatch = useDispatch();
  const signin = () => {
-   const user = db.users.find(
-     (u: any) =>
-       u.username === credentials.username &&
-       u.password === credentials.password
-   );
+  const user = (db.users as User[]).find(
+    (u) => u.loginId === credentials.username && u.password === credentials.password
+  );
    if (!user) return;
    dispatch(setCurrentUser(user));
    redirect("/Dashboard");

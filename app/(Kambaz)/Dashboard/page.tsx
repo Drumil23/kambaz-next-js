@@ -5,16 +5,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { addNewCourse, deleteCourse, updateCourse } from "../Courses/reducer";
 import { RootState } from "../store";
 import * as db from "../Database";
-import { RootState } from "../store";
+import type { Course } from "../Database/types";
 // import Image from "next/image";
 import { Button, Card, CardBody, CardImg, CardText, CardTitle, Col, Row } from "react-bootstrap";
 export default function Dashboard() {
   const { courses } = useSelector((state: RootState) => state.coursesReducer);
   const dispatch = useDispatch();
-  const [course, setCourse] = useState<any>({
-    _id: "0", name: "New Course", number: "New Number",
-    startDate: "2023-09-10", endDate: "2023-12-15",
-    image: "husky.png", description: "New Description"
+  type DashboardCourse = Course & { image?: string; description?: string; number?: string };
+  const [course, setCourse] = useState<DashboardCourse>({
+    _id: "0",
+    name: "New Course",
+    number: "New Number",
+    startDate: "2023-09-10",
+    endDate: "2023-12-15",
+    image: "husky.png",
+    description: "New Description",
   });
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const { enrollments } = db;

@@ -4,13 +4,14 @@ import CourseNavigation from "./Navigation";
 import { useSelector } from "react-redux";
 import { useParams } from "next/navigation";
 import { RootState } from "../../store";
+import type { Course } from "../../Database/types";
 import { FaAlignJustify } from "react-icons/fa6";
-import { courses } from "../../Database";
 
 export default function CoursesLayout({ children }: { children: ReactNode }) {
   const { cid } = useParams();
+ const cidStr = Array.isArray(cid) ? cid[0] : cid;
  const { courses } = useSelector((state: RootState) => state.coursesReducer);
- const course = courses.find((course: any) => course._id === cid);
+ const course = courses.find((c: Course) => c._id === cidStr);
 
   return (
     <div id="wd-courses">
