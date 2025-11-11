@@ -1,43 +1,82 @@
 "use client"
-
-import { ListGroup, ListGroupItem } from "react-bootstrap";
+import { v4 as uuidv4 } from "uuid";
+import { useState } from "react";
+import { ListGroup, ListGroupItem, FormControl } from "react-bootstrap";
 import ModulesControls from "./ModulesControls";
 import { BsGripVertical } from "react-icons/bs";
-import LessonControlButtons from "./LessonControlButtons";
+import ModuleControlButtons from "./ModuleControlButtons";
 import { useParams } from "next/navigation";
-import * as db from "../../../Database";
+import { addModule, editModule, updateModule, deleteModule }
+  from "./reducer";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../store";
 
 type Lesson = {
-  id: string;
+  _id: string;
   name: string;
 };
 
 type Module = {
-  id: string;
+  _id: string;
   course: string;
   name: string;
+  editing?: boolean;
   lessons?: Lesson[];
 };
 
 export default function Modules() {
   const { cid } = useParams();
-  const modules: Module[] = (db.modules as unknown) as Module[];
+  // use modules from Redux store as source-of-truth
+  const modules = useSelector((state: RootState) => state.modulesReducer.modules) as Module[];
+  const [moduleName, setModuleName] = useState("");
+  const dispatch = useDispatch();
+  // wrapper handlers (avoid name collisions with imported action creators)
+  const handleAddModule = () => {
+    dispatch(addModule({ name: moduleName, course: cid as string }));
+    setModuleName("");
+  };
+  const handleDeleteModule = (moduleId: string) => {
+    dispatch(deleteModule(moduleId));
+  };
+  const handleEditModule = (moduleId: string) => {
+    dispatch(editModule(moduleId));
+  };
+  const handleUpdateModule = (module: Module) => {
+    dispatch(updateModule(module));
+  };
+
+
   return (
     <div>
-      <ModulesControls /><br /><br /><br /><br />
+  <ModulesControls moduleName={moduleName} setModuleName={setModuleName} addModule={handleAddModule} isHeader />
+      <br /><br /><br /><br />
       <ListGroup className="rounded-0" id="wd-modules">
         {modules
           .filter((module) => module.course === cid)
           .map((module) => (
-            <ListGroupItem key={module.id ?? module.name} className="wd-module p-0 mb-5 fs-5 border-gray">
+            <ListGroupItem key={module._id ?? module.name} className="wd-module p-0 mb-5 fs-5 border-gray">
               <div className="wd-title p-3 ps-2 bg-secondary">
-                <BsGripVertical className="me-2 fs-3" /> {module.name} <ModulesControls />
+                <BsGripVertical className="me-2 fs-3" />
+                {!module.editing && module.name}
+                {module.editing && (
+                  <FormControl
+                    className="w-50 d-inline-block"
+                    defaultValue={module.name}
+                    onChange={(e) => handleUpdateModule({ ...module, name: (e.target as HTMLInputElement).value })}
+                    onKeyDown={(e) => {
+                      if ((e as React.KeyboardEvent<HTMLInputElement>).key === "Enter") {
+                        handleUpdateModule({ ...module, editing: false });
+                      }
+                    }}
+                  />
+                )}
+                <ModuleControlButtons moduleId={module._id} deleteModule={handleDeleteModule} editModule={handleEditModule} />
               </div>
               {module.lessons && (
                 <ListGroup className="wd-lessons rounded-0">
-                  {module.lessons.map((lesson) => (
-                    <ListGroupItem key={lesson.id ?? lesson.name} className="wd-lesson p-3 ps-1">
-                      <BsGripVertical className="me-2 fs-3" /> {lesson.name} <LessonControlButtons />
+                  {module.lessons.map((lesson: Lesson) => (
+                    <ListGroupItem key={lesson._id ?? lesson.name} className="wd-lesson p-3 ps-1">
+                      <BsGripVertical className="me-2 fs-3" /> {lesson.name}
                     </ListGroupItem>
                   ))}
                 </ListGroup>)}
