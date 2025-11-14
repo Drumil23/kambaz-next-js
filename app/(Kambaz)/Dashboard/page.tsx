@@ -1,14 +1,10 @@
 "use client"
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-// Link intentionally not used here because navigation is guarded
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewCourse, deleteCourse, updateCourse } from "../Courses/reducer";
 import { RootState } from "../store";
-// db import removed (we now use enrollments from Redux)
 import { enroll, unenroll } from "../Courses/enrollments/reducer";
 import type { Course } from "../Database/types";
-// import Image from "next/image";
 import { Button, Card, CardBody, CardImg, CardText, CardTitle, Col, Row } from "react-bootstrap";
 export default function Dashboard() {
   const { courses } = useSelector((state: RootState) => state.coursesReducer);
@@ -25,11 +21,18 @@ export default function Dashboard() {
   });
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const enrollments = useSelector((state: RootState) => state.enrollmentsReducer.enrollments);
-  const searchParams = useSearchParams();
-  const initialShowAll = !!(searchParams && (searchParams.get("showAll") === "1" || searchParams.get("showAll") === "true"));
-  const [showAll, setShowAll] = useState(initialShowAll);
+  const [showAll, setShowAll] = useState(false);
+  // read query param on the client to avoid SSR/CSR bailout warning for useSearchParams
+  useEffect(() => {
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const val = sp.get("showAll");
+      if (val === "1" || val === "true") setShowAll(true);
+    } catch {
+      // ignore
+    }
+  }, []);
 
-  // Debug info: show current user and enrollment count for troubleshooting
   const myEnrollmentCount = currentUser
     ? enrollments.filter((e) => e.user === currentUser._id).length
     : 0;
