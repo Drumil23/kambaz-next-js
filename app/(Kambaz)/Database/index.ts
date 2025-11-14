@@ -2,7 +2,6 @@ import courses from "./courses.json";
 import modules from "./modules.json";
 import assignments from "./assignments.json";
 import enrollments from "./enrollments.json";
-import { PassThrough } from "stream";
 
 export { courses, modules, assignments, enrollments }
 
