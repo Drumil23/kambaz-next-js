@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 // Link intentionally not used here because navigation is guarded
 import { useDispatch, useSelector } from "react-redux";
 import { addNewCourse, deleteCourse, updateCourse } from "../Courses/reducer";
@@ -24,13 +25,23 @@ export default function Dashboard() {
   });
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const enrollments = useSelector((state: RootState) => state.enrollmentsReducer.enrollments);
-  const [showAll, setShowAll] = useState(false);
+  const searchParams = useSearchParams();
+  const initialShowAll = !!(searchParams && (searchParams.get("showAll") === "1" || searchParams.get("showAll") === "true"));
+  const [showAll, setShowAll] = useState(initialShowAll);
 
-
+  // Debug info: show current user and enrollment count for troubleshooting
+  const myEnrollmentCount = currentUser
+    ? enrollments.filter((e) => e.user === currentUser._id).length
+    : 0;
 
   return (
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1>
+      {currentUser && (
+        <div className="alert alert-secondary small" id="wd-debug-info">
+          <strong>Debug:</strong> currentUser: {currentUser._id} ({currentUser.role}) • Enrollments: {myEnrollmentCount}
+        </div>
+      )}
       <hr />
 
       <h5>New Course</h5>
@@ -103,9 +114,10 @@ export default function Dashboard() {
                         <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">{courseItem.name}</CardTitle>
                         <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>{courseItem.description}</CardText>
                         <Button variant="primary" onClick={() => {
-                          // protect navigation: only enrolled users may navigate
                           const isEnrolled = enrollments.some(e => e.user === currentUser._id && e.course === courseItem._id);
-                          if (isEnrolled) window.location.href = `/Courses/${courseItem._id}/Home`;
+                          const isPrivileged = currentUser?.role === "Faculty" || currentUser?.role === "Dean";
+                          const canOpen = isPrivileged || isEnrolled;
+                          if (canOpen) window.location.href = `/Courses/${courseItem._id}/Home`;
                           else alert('You must be enrolled in the course to open it.');
                         }}> Go </Button>
                       </CardBody>
@@ -135,7 +147,9 @@ export default function Dashboard() {
                         <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>{courseItem.description}</CardText>
                         <Button variant="primary" onClick={() => {
                           if (!currentUser) { alert('Please sign in to open a course.'); return; }
-                          const allowed = enrollments.some(e => e.user === currentUser._id && e.course === courseItem._id);
+                          const isEnrolled = enrollments.some(e => e.user === currentUser._id && e.course === courseItem._id);
+                          const isPrivileged = currentUser?.role === "Faculty" || currentUser?.role === "Dean";
+                          const allowed = isPrivileged || isEnrolled;
                           if (allowed) window.location.href = `/Courses/${courseItem._id}/Home`;
                           else alert('You must be enrolled in the course to open it.');
                         }}> Go </Button>

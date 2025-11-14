@@ -2,6 +2,7 @@ import courses from "./courses.json";
 import modules from "./modules.json";
 import assignments from "./assignments.json";
 import enrollments from "./enrollments.json";
+import { PassThrough } from "stream";
 
 export { courses, modules, assignments, enrollments }
 
@@ -11,6 +12,7 @@ export const users = [
     firstName: "Drumil",
     lastName: "Kotecha",
     loginId: "kotech.d",
+    password: "pass@123",
     section: "Section A",
     role: "Dean",
     lastActivity: "2025-10-19",

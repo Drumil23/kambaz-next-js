@@ -16,8 +16,18 @@ interface AccountState {
   currentUser: User | null;
 }
 
+const loadCurrentUser = (): User | null => {
+  try {
+    if (typeof window === "undefined") return null;
+    const raw = sessionStorage.getItem("kambaz.currentUser");
+    return raw ? (JSON.parse(raw) as User) : null;
+  } catch {
+    return null;
+  }
+};
+
 const initialState: AccountState = {
-  currentUser: null,
+  currentUser: loadCurrentUser(),
 };
 
 const accountSlice = createSlice({
