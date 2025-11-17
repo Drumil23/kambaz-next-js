@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../reducer";
 import { RootState } from "../../store";
 import { Button, FormControl } from "react-bootstrap";
+import * as client from "../client";
 
 type ProfileType = {
   username?: string;
@@ -27,9 +28,26 @@ export default function Profile() {
    setProfile(currentUser as ProfileType);
  }, [currentUser]);
 
- const signout = () => {
+ const signout = async () => {
+   try {
+     await client.signout();
+   } catch {
+     // ignore
+   }
    dispatch(setCurrentUser(null));
+   try { sessionStorage.removeItem("kambaz.currentUser"); } catch {}
    redirect("/Account/Signin");
+ };
+
+ const updateProfile = async () => {
+   if (!profile) return;
+   try {
+     const updated = await client.updateUser(profile);
+     dispatch(setCurrentUser(updated));
+     try { sessionStorage.setItem("kambaz.currentUser", JSON.stringify(updated)); } catch {}
+   } catch (err: any) {
+     alert(err?.response?.data?.message || "Update failed");
+   }
  };
  return (
    <div className="wd-profile-screen">
@@ -61,9 +79,8 @@ export default function Profile() {
            <option value="FACULTY">Faculty</option>{" "}
            <option value="STUDENT">Student</option>
          </select>
-         <Button onClick={signout} className="w-100 mb-2" id="wd-signout-btn">
-           Sign out
-         </Button>
+          <Button onClick={updateProfile} className="btn btn-primary w-100 mb-2"> Update </Button>
+          <Button onClick={signout} className="wd-signout-btn btn btn-danger w-100"> Sign out </Button>
        </div>
      )}
    </div>

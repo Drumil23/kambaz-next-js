@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { setCurrentUser } from "../reducer";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
-import * as db from "../../Database";
+import * as client from "../client";
 import { FormControl, Button } from "react-bootstrap";
 
 type Credentials = { username: string; password: string };
@@ -16,29 +16,22 @@ export default function Signin() {
  const dispatch = useDispatch();
  const router = useRouter();
  const [signedIn, setSignedIn] = useState(false);
- const signin = () => {
+ const signin = async () => {
   setError(null);
-  const user = (db.users as User[]).find(
-    (u) => u.loginId === credentials.username && u.password === credentials.password
-  );
-  if (!user) {
-    setError("Invalid credentials. If you don't have an account, please sign up.");
-    return;
-  }
-  console.log("Signin: matched user", user);
-  dispatch(setCurrentUser(user));
   try {
-    sessionStorage.setItem("kambaz.currentUser", JSON.stringify(user));
-  } catch {
-    /* ignore */
-  }
-  // redirect to dashboard and show all courses by default after sign in
-  setSignedIn(true);
-  try {
+    const user = await client.signin(credentials);
+    if (!user) {
+      setError("Invalid credentials. If you don't have an account, please sign up.");
+      return;
+    }
+    dispatch(setCurrentUser(user));
+    try {
+      sessionStorage.setItem("kambaz.currentUser", JSON.stringify(user));
+    } catch {}
+    setSignedIn(true);
     router.push("/Dashboard?showAll=1");
-    console.log("Signin: router.push called");
-  } catch (e) {
-    console.error("Signin: router.push error", e);
+  } catch (err: any) {
+    setError(err?.response?.data?.message || "Sign in failed");
   }
  };
   return (
