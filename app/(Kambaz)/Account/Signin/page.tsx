@@ -30,8 +30,20 @@ export default function Signin() {
     } catch {}
     setSignedIn(true);
     router.push("/Dashboard?showAll=1");
-  } catch (err: any) {
-    setError(err?.response?.data?.message || "Sign in failed");
+  } catch (err: unknown) {
+    const getErrorMessage = (e: unknown) => {
+      if (typeof e === "object" && e !== null) {
+        const obj = e as Record<string, unknown>;
+        const response = obj.response as Record<string, unknown> | undefined;
+        const data = response?.data as Record<string, unknown> | undefined;
+        if (data && typeof data.message === "string") return data.message;
+        if (typeof obj.message === "string") return obj.message;
+      }
+      if (e instanceof Error) return e.message;
+      return String(e);
+    };
+
+    setError(getErrorMessage(err) || "Sign in failed");
   }
  };
   return (

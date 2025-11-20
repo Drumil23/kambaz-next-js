@@ -45,9 +45,21 @@ export default function Profile() {
      const updated = await client.updateUser(profile);
      dispatch(setCurrentUser(updated));
      try { sessionStorage.setItem("kambaz.currentUser", JSON.stringify(updated)); } catch {}
-   } catch (err: any) {
-     alert(err?.response?.data?.message || "Update failed");
-   }
+  } catch (err: unknown) {
+    const getErrorMessage = (e: unknown) => {
+      if (typeof e === "object" && e !== null) {
+        const obj = e as Record<string, unknown>;
+        const response = obj.response as Record<string, unknown> | undefined;
+        const data = response?.data as Record<string, unknown> | undefined;
+        if (data && typeof data.message === "string") return data.message;
+        if (typeof obj.message === "string") return obj.message;
+      }
+      if (e instanceof Error) return e.message;
+      return String(e);
+    };
+
+    alert(getErrorMessage(err) || "Update failed");
+  }
  };
  return (
    <div className="wd-profile-screen">
