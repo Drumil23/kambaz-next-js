@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import FormControl from "react-bootstrap/esm/FormControl";
 import { useState } from "react";
