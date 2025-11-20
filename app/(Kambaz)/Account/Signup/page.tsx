@@ -3,12 +3,13 @@ import Link from "next/link";
 import FormControl from "react-bootstrap/esm/FormControl";
 import { useState } from "react";
 import * as client from "../client";
+import type { User } from "../client";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "../reducer";
 import { useRouter } from "next/navigation";
 
 export default function Signup() {
-    const [user, setUser] = useState<any>({ username: "", password: "" });
+    const [user, setUser] = useState<User>({ username: "", password: "" });
     const dispatch = useDispatch();
     const router = useRouter();
 
@@ -18,8 +19,9 @@ export default function Signup() {
             dispatch(setCurrentUser(currentUser));
             try { sessionStorage.setItem("kambaz.currentUser", JSON.stringify(currentUser)); } catch {}
             router.push("/Account/Profile");
-        } catch (err: any) {
-            alert(err?.response?.data?.message || "Signup failed");
+        } catch (err: unknown) {
+            const msg = getErrorMessage(err, "Signup failed");
+            alert(msg);
         }
     };
 
@@ -35,3 +37,22 @@ export default function Signup() {
         </div>
     );
 }
+
+    function getErrorMessage(err: unknown, fallback = "Error") {
+        if (!err) return fallback;
+        if (typeof err === "string") return err;
+        if (typeof err === "object" && err !== null) {
+            const e = err as Record<string, unknown>;
+            // axios error shape: { response: { data: { message } } }
+            if (e.response && typeof e.response === "object") {
+                const resp = e.response as Record<string, unknown>;
+                if (resp.data && typeof resp.data === "object") {
+                    const data = resp.data as Record<string, unknown>;
+                    if (typeof data.message === "string") return data.message;
+                }
+            }
+            const maybeMessage = (e as Record<string, unknown>)["message"];
+            if (typeof maybeMessage === "string") return maybeMessage;
+        }
+        return fallback;
+    }

@@ -13,7 +13,16 @@ export const deleteCourse = async (id: string) => {
   return data;
 };
 
-export const updateCourse = async (course: any) => {
+export interface Course {
+  _id: string;
+  title?: string;
+  description?: string;
+  published?: boolean;
+  price?: number;
+  [key: string]: unknown;
+}
+
+export const updateCourse = async (course: Course) => {
   const { data } = await axios.put(`${COURSES_API}/${course._id}`, course);
   return data;
 };

@@ -4,37 +4,62 @@ import { HTTP_SERVER } from "../../lib/config";
 const axiosWithCredentials = axios.create({ withCredentials: true });
 const USERS_API = `${HTTP_SERVER}/api/users`;
 
-export const signin = async (credentials: { username: string; password: string }) => {
-  const response = await axiosWithCredentials.post(`${USERS_API}/signin`, credentials);
+export type Credentials = { username: string; password: string };
+
+export type User = {
+  _id?: string;
+  username?: string;
+  password?: string;
+  firstName?: string;
+  lastName?: string;
+  dob?: string;
+  email?: string;
+  role?: string;
+  [key: string]: unknown;
+};
+
+export type Course = {
+  _id: string;
+  name: string;
+  number?: string;
+  startDate?: string;
+  endDate?: string;
+  department?: string;
+  credits?: number;
+  description?: string;
+  [key: string]: unknown;
+};
+
+export const signin = async (credentials: Credentials): Promise<User | null> => {
+  const response = await axiosWithCredentials.post<User | null>(`${USERS_API}/signin`, credentials);
   return response.data;
 };
 
-export const signup = async (user: any) => {
-  const response = await axiosWithCredentials.post(`${USERS_API}/signup`, user);
+export const signup = async (user: User): Promise<User> => {
+  const response = await axiosWithCredentials.post<User>(`${USERS_API}/signup`, user);
   return response.data;
 };
 
-export const profile = async () => {
-  const response = await axiosWithCredentials.post(`${USERS_API}/profile`);
+export const profile = async (): Promise<User | null> => {
+  const response = await axiosWithCredentials.post<User | null>(`${USERS_API}/profile`);
   return response.data;
 };
 
-export const signout = async () => {
-  const response = await axiosWithCredentials.post(`${USERS_API}/signout`);
+export const signout = async (): Promise<void> => {
+  await axiosWithCredentials.post(`${USERS_API}/signout`);
+};
+
+export const updateUser = async (user: User): Promise<User> => {
+  const response = await axiosWithCredentials.put<User>(`${USERS_API}/${user._id}`, user);
   return response.data;
 };
 
-export const updateUser = async (user: any) => {
-  const response = await axiosWithCredentials.put(`${USERS_API}/${user._id}`, user);
+export const findMyCourses = async (): Promise<Course[]> => {
+  const response = await axiosWithCredentials.get<Course[]>(`${USERS_API}/current/courses`);
   return response.data;
 };
 
-export const findMyCourses = async () => {
-  const response = await axiosWithCredentials.get(`${USERS_API}/current/courses`);
-  return response.data;
-};
-
-export const createCourse = async (course: any) => {
-  const response = await axiosWithCredentials.post(`${USERS_API}/current/courses`, course);
+export const createCourse = async (course: Omit<Course, "_id">): Promise<Course> => {
+  const response = await axiosWithCredentials.post<Course>(`${USERS_API}/current/courses`, course);
   return response.data;
 };
