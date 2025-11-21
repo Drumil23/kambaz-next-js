@@ -1,7 +1,14 @@
 import axios from "axios";
 import { HTTP_SERVER } from "../../lib/config";
 
-const axiosWithCredentials = axios.create({ withCredentials: true });
+axios.defaults.withCredentials = true;
+ 
+// Create axios instance with baseURL + credentials
+const axiosWithCredentials = axios.create({
+  baseURL: HTTP_SERVER,
+  withCredentials: true,
+});
+
 const USERS_API = `${HTTP_SERVER}/api/users`;
 
 export type Credentials = { username: string; password: string };
