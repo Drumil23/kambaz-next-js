@@ -8,7 +8,7 @@ import * as client from "../client";
 import { FormControl, Button } from "react-bootstrap";
 
 type Credentials = { username: string; password: string };
-type User = { loginId?: string; password?: string; [key: string]: unknown };
+// type User = { loginId?: string; password?: string; [key: string]: unknown };
 
 export default function Signin() {
  const [credentials, setCredentials] = useState<Credentials>({ username: "", password: "" });
