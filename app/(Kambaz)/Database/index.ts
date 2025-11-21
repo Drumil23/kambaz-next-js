@@ -46,5 +46,16 @@ export const users = [
     role: "Student",
     lastActivity: "2025-10-19",
     totalActivity: "9h 20m"
+  },
+  {
+    _id: "876",
+    firstName: "bro",
+    lastName: "bro",
+    loginId: "bro",
+    section: "Section C",
+    password: "1",
+    role: "Student",
+    lastActivity: "2025-10-14",
+    totalActivity: "1h 20m"
   }
 ];
