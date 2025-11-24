@@ -37,7 +37,7 @@ export const deleteAssignmentApi = async (id: string, roleHeader?: string): Prom
   return data;
 };
 
-export default {
+export const assignmentsApi = {
   fetchAssignments,
   fetchAssignment,
   createAssignment,

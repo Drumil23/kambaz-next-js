@@ -26,20 +26,22 @@ export default function PeopleTable() {
 
     const privileged = currentUser && (currentUser.role === "Faculty" || currentUser.role === "Dean");
 
-    const load = async () => {
-        if (!cid) return;
-        setLoading(true);
-        try {
-            const data = await fetchUsersForCourse(cid);
-            setUsers(data);
-        } catch (e) {
-            console.error('Failed to fetch users', e);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => { load(); }, [cid]);
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            if (!cid) return;
+            setLoading(true);
+            try {
+                const data = await fetchUsersForCourse(cid);
+                if (mounted) setUsers(data as User[]);
+            } catch (err: unknown) {
+                console.error('Failed to fetch users', err);
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        })();
+        return () => { mounted = false; };
+    }, [cid]);
 
     const onAdd = async () => {
         const firstName = prompt('First name');
@@ -48,13 +50,14 @@ export default function PeopleTable() {
         const loginId = prompt('Login ID') || '';
         const section = prompt('Section') || '';
         const role = prompt('Role (Student|Faculty|Dean)') || 'Student';
-        const newUser: any = { firstName, lastName, loginId, section, role, lastActivity: new Date().toISOString().slice(0,10), totalActivity: '0h' };
+        const newUser: Partial<User> = { firstName, lastName, loginId, section, role, lastActivity: new Date().toISOString().slice(0,10), totalActivity: '0h' };
         try {
             const created = await createUser(newUser, currentUser?.role);
             // Optionally enroll the created user in this course by calling enrollments route (not implemented here)
             setUsers(prev => [...prev, created]);
-        } catch (e:any) {
-            alert(e?.response?.data?.error || 'Failed to create user');
+        } catch (err: unknown) {
+            console.error('Create user failed', err);
+            alert('Failed to create user');
         }
     };
 
@@ -69,8 +72,9 @@ export default function PeopleTable() {
         try {
             const saved = await updateUser(updated, currentUser?.role);
             setUsers(prev => prev.map(u => u._id === saved._id ? saved : u));
-        } catch (e:any) {
-            alert(e?.response?.data?.error || 'Failed to update user');
+        } catch (err: unknown) {
+            console.error('Update failed', err);
+            alert('Failed to update user');
         }
     };
 
@@ -79,8 +83,9 @@ export default function PeopleTable() {
         try {
             await deleteUser(user._id, currentUser?.role);
             setUsers(prev => prev.filter(u => u._id !== user._id));
-        } catch (e:any) {
-            alert(e?.response?.data?.error || 'Failed to delete user');
+        } catch (err: unknown) {
+            console.error('Delete failed', err);
+            alert('Failed to delete user');
         }
     };
 
