@@ -1,16 +1,14 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { Form, Button, Card, Badge, InputGroup, Modal } from "react-bootstrap";
 import { FaPlus, FaSearch, FaRegFileAlt, FaTrash } from "react-icons/fa";
 import { BsThreeDotsVertical, BsGripVertical } from "react-icons/bs";
 import type { Assignment } from "../../../Database/types";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../store";
 import GreenCheckmark from "../Modules/GreenCheckmark";
-import { deleteAssignment } from "../../Assignments/reducer";
+import * as assignmentsClient from "../../Assignments/client";
 
 const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -29,30 +27,31 @@ export default function Assignments() {
     const [searchTerm, setSearchTerm] = useState("");
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedDeleteId, setSelectedDeleteId] = useState<string | null>(null);
-    const dispatch = useDispatch();
+    const [assignments, setAssignments] = useState<Assignment[]>([]);
 
-    const allAssignments = useSelector((state: RootState) => state.assignmentsReducer.assignments) as Assignment[];
-    const courseAssignments = allAssignments
+    useEffect(() => {
+        const cidStr = Array.isArray(cid) ? cid[0] : cid;
+        (async () => {
+            try {
+                const data = await assignmentsClient.fetchAssignments(cidStr as string);
+                setAssignments(data);
+            } catch (err: unknown) {
+                console.error('Failed to load assignments', err);
+            }
+        })();
+    }, [cid]);
+
+    const courseAssignments = assignments
         .filter((assignment) => assignment.course === cid)
-        .sort((a, b) =>
-            new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
-        ) as Assignment[];
+        .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()) as Assignment[];
 
-    const filteredAssignments = courseAssignments
-        .filter((assignment) =>
-            assignment.title.toLowerCase().includes(searchTerm.toLowerCase())
-        );
+    const filteredAssignments = courseAssignments.filter((assignment) => assignment.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
     // small helper component: button that navigates to new assignment editor
     function AddAssignmentButton({ cid }: { cid: string | undefined }) {
         const router = useRouter();
         return (
-            <button
-                type="button"
-                id="wd-add-assignment"
-                className="btn btn-danger d-flex align-items-center"
-                onClick={() => router.push(`/Courses/${cid}/Assignments/new`)}
-            >
+            <button type="button" id="wd-add-assignment" className="btn btn-danger d-flex align-items-center" onClick={() => router.push(`/Courses/${cid}/Assignments/new`)}>
                 <FaPlus className="me-2" />
                 Assignment
             </button>
@@ -122,17 +121,12 @@ export default function Assignments() {
                                 <div className="d-flex align-items-center ms-3">
                                     {assignment.status === "PUBLISHED" && <GreenCheckmark />}
                                     <Button variant="link" className="text-dark p-0 ms-2"><BsThreeDotsVertical /></Button>
-                                    <Button
-                                        variant="link"
-                                        className="text-danger p-0 ms-2"
-                                        title="Delete assignment"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            setSelectedDeleteId(assignment._id);
-                                            setShowDeleteModal(true);
-                                        }}
-                                    >
+                                    <Button variant="link" className="text-danger p-0 ms-2" title="Delete assignment" onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        setSelectedDeleteId(assignment._id);
+                                        setShowDeleteModal(true);
+                                    }}>
                                         <FaTrash />
                                     </Button>
                                 </div>
@@ -148,9 +142,14 @@ export default function Assignments() {
                 <Modal.Body>Are you sure you want to remove this assignment?</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
-                    <Button variant="danger" onClick={() => {
+                    <Button variant="danger" onClick={async () => {
                         if (selectedDeleteId) {
-                            dispatch(deleteAssignment(selectedDeleteId));
+                            try {
+                                await assignmentsClient.deleteAssignmentApi(selectedDeleteId, 'Faculty');
+                                setAssignments((prev) => prev.filter((a) => a._id !== selectedDeleteId));
+                            } catch (err: unknown) {
+                                console.error('Delete failed', err);
+                            }
                         }
                         setShowDeleteModal(false);
                         setSelectedDeleteId(null);

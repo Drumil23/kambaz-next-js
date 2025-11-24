@@ -2,14 +2,12 @@
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Form, Button, Row, Col } from "react-bootstrap";
-import { useDispatch } from "react-redux";
-import { addAssignment } from "../../../Assignments/reducer";
 import type { Assignment } from "../../../../Database/types";
+import * as assignmentsClient from "../../../Assignments/client";
 
 export default function NewAssignment() {
   const { cid } = useParams();
   const router = useRouter();
-  const dispatch = useDispatch();
   const [assignment, setAssignment] = useState<Partial<Assignment>>({
     title: "",
     description: "",
@@ -23,8 +21,14 @@ export default function NewAssignment() {
 
   const save = () => {
     console.log("Saving assignment:", assignment);
-    dispatch(addAssignment(assignment));
-    router.push(`/Courses/${cid}/Assignments`);
+    (async () => {
+      try {
+        await assignmentsClient.createAssignment({ ...assignment }, 'Faculty');
+        router.push(`/Courses/${cid}/Assignments`);
+      } catch (err: unknown) {
+        console.error('Create failed', err);
+      }
+    })();
   };
   const cancel = () => router.push(`/Courses/${cid}/Assignments`);
 

@@ -1,10 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../../store";
 import { Form, Row, Col, Button, Card } from "react-bootstrap";
-import { updateAssignment, deleteAssignment } from "../../../Assignments/reducer";
+import * as assignmentsClient from "../../../Assignments/client";
 import type { Assignment } from "../../../../Database/types";
 
 export default function AssignmentEditor() {
@@ -12,39 +10,49 @@ export default function AssignmentEditor() {
   const cidStr = Array.isArray(cid) ? cid[0] : cid;
   const aidStr = Array.isArray(aid) ? aid[0] : aid;
   const router = useRouter();
-  const dispatch = useDispatch();
-
-  const assignment = useSelector((state: RootState) =>
-    state.assignmentsReducer?.assignments?.find((a: Assignment) => a._id === aidStr)
-  ) as Assignment | undefined;
-
   const [form, setForm] = useState<Partial<Assignment>>({});
+  const [assignment, setAssignment] = useState<Assignment | null>(null);
 
   useEffect(() => {
-    if (assignment) setForm(assignment);
-  }, [assignment]);
+    (async () => {
+      try {
+        const data = await assignmentsClient.fetchAssignment(aidStr as string);
+        setAssignment(data);
+        setForm(data);
+      } catch (err: unknown) {
+        console.error('Failed to load assignment', err);
+      }
+    })();
+  }, [aidStr]);
 
   if (!assignment) {
     return <div className="p-4">Assignment not found</div>;
   }
 
-  const save = () => {
+  const save = async () => {
     const updated = { ...(assignment as Assignment), ...(form as Partial<Assignment>) } as Assignment;
-    dispatch(updateAssignment(updated));
-    router.push(`/Courses/${cidStr}/Assignments`);
+    try {
+      await assignmentsClient.updateAssignment(updated, 'Faculty');
+      router.push(`/Courses/${cidStr}/Assignments`);
+    } catch (err: unknown) {
+      console.error('Update failed', err);
+    }
   };
 
   const cancel = () => router.push(`/Courses/${cidStr}/Assignments`);
 
-  const remove = () => {
+  const remove = async () => {
     if (!confirm("Are you sure you want to delete this assignment?")) return;
     if (!aidStr) {
-      // nothing to delete
       router.push(`/Courses/${cidStr}/Assignments`);
       return;
     }
-    dispatch(deleteAssignment(aidStr));
-    router.push(`/Courses/${cidStr}/Assignments`);
+    try {
+      await assignmentsClient.deleteAssignmentApi(aidStr, 'Faculty');
+      router.push(`/Courses/${cidStr}/Assignments`);
+    } catch (err: unknown) {
+      console.error('Delete failed', err);
+    }
   };
 
   return (
