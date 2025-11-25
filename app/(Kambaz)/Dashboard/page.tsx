@@ -148,41 +148,45 @@ export default function Dashboard() {
                       <CardBody className="card-body">
                         <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">{courseItem.name}</CardTitle>
                         <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>{courseItem.description}</CardText>
-                        <Button variant="primary" onClick={() => {
-                          if (!currentUser) { alert('Please sign in to open a course.'); return; }
-                          const isEnrolled = enrollments.some(e => e.user === currentUser._id && e.course === courseItem._id);
-                          const isPrivileged = currentUser?.role === "Faculty" || currentUser?.role === "Dean";
-                          const allowed = isPrivileged || isEnrolled;
-                          if (allowed) window.location.href = `/Courses/${courseItem._id}/Home`;
-                          else alert('You must be enrolled in the course to open it.');
-                        }}> Go </Button>
-                        {/* Enrollment buttons */}
-                        {currentUser && (
-                          isEnrolled ? (
-                            <Button variant="danger" className="float-end ms-2" onClick={(ev) => { ev.preventDefault(); dispatch(unenroll({ user: currentUser._id!, course: courseItem._id })); }}>
-                              Unenroll
-                            </Button>
-                          ) : (
-                            <Button variant="success" className="float-end ms-2" onClick={(ev) => { ev.preventDefault(); dispatch(enroll({ user: currentUser._id!, course: courseItem._id })); }}>
-                              Enroll
-                            </Button>
-                          )
-                        )}
-                        <Button onClick={(event) => {
-                          event.preventDefault();
-                          dispatch(deleteCourse(courseItem._id));
-                        }} className="btn btn-danger float-end"
-                          id="wd-delete-course-click">
-                          Delete
-                        </Button>
-                        <Button id="wd-edit-course-click"
-                          onClick={(event) => {
+                        <div className="d-flex flex-wrap gap-2">
+                          <Button variant="primary" onClick={() => {
+                            if (!currentUser) { alert('Please sign in to open a course.'); return; }
+                            const isEnrolled = enrollments.some(e => e.user === currentUser._id && e.course === courseItem._id);
+                            const isPrivileged = currentUser?.role === "Faculty" || currentUser?.role === "Dean";
+                            const allowed = isPrivileged || isEnrolled;
+                            if (allowed) window.location.href = `/Courses/${courseItem._id}/Home`;
+                            else alert('You must be enrolled in the course to open it.');
+                          }}> Go </Button>
+                          
+                          <Button onClick={(event) => {
                             event.preventDefault();
-                            setCourse(courseItem);
-                          }}
-                          className="btn btn-warning me-2 float-end" >
-                          Edit
-                        </Button>
+                            dispatch(deleteCourse(courseItem._id));
+                          }} className="btn btn-danger"
+                            id="wd-delete-course-click">
+                            Delete
+                          </Button>
+                          
+                          {currentUser && (
+                            isEnrolled ? (
+                              <Button variant="danger" onClick={(ev) => { ev.preventDefault(); dispatch(unenroll({ user: currentUser._id!, course: courseItem._id })); }}>
+                                Unenroll
+                              </Button>
+                            ) : (
+                              <Button variant="success" onClick={(ev) => { ev.preventDefault(); dispatch(enroll({ user: currentUser._id!, course: courseItem._id })); }}>
+                                Enroll
+                              </Button>
+                            )
+                          )}
+                          
+                          <Button id="wd-edit-course-click"
+                            onClick={(event) => {
+                              event.preventDefault();
+                              setCourse(courseItem);
+                            }}
+                            className="btn btn-warning" >
+                            Edit
+                          </Button>
+                        </div>
                       </CardBody>
                     </div>
                   </Card>
