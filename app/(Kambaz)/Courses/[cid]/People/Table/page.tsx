@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { fetchUsersForCourse, createUser, updateUser, deleteUser } from "../../../usersClient";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../store";
+import { RootState } from "../../../../store";
 
 interface User {
     _id: string;
@@ -20,6 +20,7 @@ interface User {
 
 export default function PeopleTable() {
     const { cid } = useParams();
+    const courseId = Array.isArray(cid) ? cid[0] : cid;
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(false);
     const { currentUser } = useSelector((state: RootState) => state.accountReducer);
@@ -29,10 +30,10 @@ export default function PeopleTable() {
     useEffect(() => {
         let mounted = true;
         (async () => {
-            if (!cid) return;
+            if (!courseId) return;
             setLoading(true);
             try {
-                const data = await fetchUsersForCourse(cid);
+                const data = await fetchUsersForCourse(courseId);
                 if (mounted) setUsers(data as User[]);
             } catch (err: unknown) {
                 console.error('Failed to fetch users', err);
@@ -41,7 +42,7 @@ export default function PeopleTable() {
             }
         })();
         return () => { mounted = false; };
-    }, [cid]);
+    }, [courseId]);
 
     const onAdd = async () => {
         const firstName = prompt('First name');
@@ -88,11 +89,11 @@ export default function PeopleTable() {
             alert('Failed to delete user');
         }
     };
-
+    
     return (
         <div id="wd-people-table">
             <div className="d-flex justify-content-between align-items-center mb-2">
-                <h3>People in {cid}</h3>
+                <h3>People in {courseId}</h3>
                 {privileged && <Button onClick={onAdd} variant="success">Add user</Button>}
             </div>
             {loading ? (

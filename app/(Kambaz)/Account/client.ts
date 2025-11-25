@@ -1,11 +1,8 @@
 import axios from "axios";
 import { HTTP_SERVER } from "../../lib/config";
 
-axios.defaults.withCredentials = true;
- 
-// Create axios instance with baseURL + credentials
+// Create axios instance with credentials enabled (no baseURL to avoid double concatenation)
 const axiosWithCredentials = axios.create({
-  baseURL: HTTP_SERVER,
   withCredentials: true,
 });
 
