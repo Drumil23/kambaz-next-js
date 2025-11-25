@@ -61,6 +61,12 @@ function genId() {
   return Date.now().toString(36) + Math.floor(Math.random() * 1000).toString(36);
 }
 
+// Helper to generate assignment id using course prefix for nicer breadcrumbing
+function genAssignmentId(course) {
+  const safeCourse = (course || 'A').replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+  return `${safeCourse}-${Date.now().toString(36)}${Math.floor(Math.random() * 1000).toString(36)}`;
+}
+
 // GET /api/users - optionally filter by course (query: ?course=RS101)
 app.get('/api/users', (req, res) => {
   const { course } = req.query;
@@ -152,13 +158,20 @@ app.get('/api/assignments/:id', (req, res) => {
 // POST create (faculty/dean only)
 app.post('/api/assignments', (req, res) => {
   const role = req.header('x-role') || 'Student';
+  const payload = req.body || {};
+  console.log('POST /api/assignments attempt role=', role, 'title=', payload.title);
   if (role !== 'Faculty' && role !== 'Dean') {
+    console.warn('Forbidden create assignment attempt role=', role);
     return res.status(403).json({ error: 'forbidden: only faculty/dean can create assignments' });
   }
-  const payload = req.body;
-  const newAssignment = { ...payload, _id: payload._id || genId() };
+  const newAssignment = { ...payload, _id: payload._id || genAssignmentId(payload.course) };
   assignments.push(newAssignment);
   saveAssignments();
+  try {
+    console.log('Created assignment', newAssignment._id, 'for course', newAssignment.course);
+  } catch (err) {
+    // ignore
+  }
   res.status(201).json(newAssignment);
 });
 

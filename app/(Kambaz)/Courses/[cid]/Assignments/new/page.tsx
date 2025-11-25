@@ -4,6 +4,8 @@ import { useParams, useRouter } from "next/navigation";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import type { Assignment } from "../../../../Database/types";
 import * as assignmentsClient from "../../../Assignments/client";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../store';
 
 export default function NewAssignment() {
   const { cid } = useParams();
@@ -19,14 +21,18 @@ export default function NewAssignment() {
     type: "Assignment",
   });
 
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+
   const save = () => {
     console.log("Saving assignment:", assignment);
     (async () => {
       try {
-        await assignmentsClient.createAssignment({ ...assignment }, 'Faculty');
+        await assignmentsClient.createAssignment({ ...assignment }, currentUser?.role);
+        alert('Assignment created');
         router.push(`/Courses/${cid}/Assignments`);
       } catch (err: unknown) {
         console.error('Create failed', err);
+        alert('Failed to create assignment (see console)');
       }
     })();
   };
