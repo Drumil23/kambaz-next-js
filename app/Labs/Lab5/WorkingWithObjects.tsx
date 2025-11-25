@@ -12,12 +12,10 @@ export default function WorkingWithObjects() {
     });
     const ASSIGNMENT_API_URL = `${HTTP_SERVER}/lab5/assignment`;
     type Assignment = { id: number; title: string; description?: string; due?: string; completed?: boolean; score?: number };
-    // module state
     type Module = { id: string; name: string; description: string; course: string };
     const [moduleObj, setModuleObj] = useState<Module | null>(null);
     const [newModuleName, setNewModuleName] = useState('');
     const [newModuleDescription, setNewModuleDescription] = useState('');
-    // score/completed edit helpers
     const [newScore, setNewScore] = useState<number | ''>(assignment.score || 0);
     const [newCompleted, setNewCompleted] = useState<boolean>(assignment.completed || false);
 
@@ -30,7 +28,6 @@ export default function WorkingWithObjects() {
             setNewCompleted(Boolean(data.completed));
         } catch (err) {
             console.error(err);
-            // setAssignment(null);
         }
     };
 
