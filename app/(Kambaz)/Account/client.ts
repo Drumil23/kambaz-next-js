@@ -8,6 +8,12 @@ const axiosWithCredentials = axios.create({
 
 const USERS_API = `${HTTP_SERVER}/api/users`;
 
+export const findAllUsers = async () => {
+  const response = await axiosWithCredentials.get(USERS_API);
+  return response.data;
+};
+
+
 export type Credentials = { username: string; password: string };
 
 export type User = {
