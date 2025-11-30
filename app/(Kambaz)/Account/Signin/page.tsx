@@ -47,21 +47,36 @@ export default function Signin() {
   }
  };
   return (
-    <div id="wd-signin-screen">
-      <h1>Sign in</h1>
-            <FormControl value={credentials.username}
-              onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-              className="mb-2" placeholder="username" id="wd-username" />
-              <FormControl value={credentials.password}
-              onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-              className="mb-2" placeholder="password" type="password" id="wd-password" />
-            {error && <div className="alert alert-danger mt-2" role="alert" id="wd-signin-error">{error}</div>}
-      <Button onClick={signin} id="wd-signin-btn" className="w-100" > Sign in </Button>
-      {signedIn && (
-        <div className="alert alert-success mt-2" id="wd-signin-success">
-          Signed in — redirecting to Dashboard. <Link href="/Dashboard">Open Dashboard</Link>
+    <div id="wd-signin-screen" className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-5 col-lg-4">
+          <h1 className="mb-4">Sign in</h1>
+          <FormControl 
+            value={credentials.username}
+            onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+            className="mb-3" 
+            placeholder="Username" 
+            id="wd-username" 
+          />
+          <FormControl 
+            value={credentials.password}
+            onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+            className="mb-3" 
+            placeholder="Password" 
+            type="password" 
+            id="wd-password" 
+          />
+          {error && <div className="alert alert-danger mt-2" role="alert" id="wd-signin-error">{error}</div>}
+          <Button onClick={signin} id="wd-signin-btn" className="w-100 mb-3">Sign in</Button>
+          {signedIn && (
+            <div className="alert alert-success mt-2" id="wd-signin-success">
+              Signed in — redirecting to Dashboard. <Link href="/Dashboard">Open Dashboard</Link>
+            </div>
+          )}
+          <div className="text-center">
+            <Link id="wd-signup-link" href="/Account/Signup">Sign up</Link>
+          </div>
         </div>
-      )}
-      <Link id="wd-signup-link" href="/Account/Signup"> Sign up </Link>
+      </div>
     </div>
 );}
