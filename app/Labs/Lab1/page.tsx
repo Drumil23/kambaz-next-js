@@ -166,7 +166,7 @@ export default function Lab1() {
         Loading an image from the internet: <br />
         <Image
           id="wd-starship"
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/SpaceX_Starship_SN8_soars_over_Boca_Chica_-_48.jpg/1200px-SpaceX_Starship_SN8_soars_over_Boca_Chica_-_48.jpg"
+          src="https://upload.wikimedia.org/wikipedia/commons/4/4a/SpaceX_Starship_ignition_during_IFT-5.jpg"
           alt="SpaceX Starship"
           width={400}
           height={600}
