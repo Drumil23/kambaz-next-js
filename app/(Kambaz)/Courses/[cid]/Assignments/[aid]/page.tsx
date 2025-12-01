@@ -61,6 +61,27 @@ export default function AssignmentEditor() {
         </tr>
         <tr>
           <td align="right" valign="top">
+            <label>Online Entry Options</label>
+          </td>
+          <td>
+            <input type="checkbox" id="wd-text-entry" />
+            <label htmlFor="wd-text-entry">Text Entry</label><br />
+            
+            <input type="checkbox" id="wd-website-url" />
+            <label htmlFor="wd-website-url">Website URL</label><br />
+            
+            <input type="checkbox" id="wd-media-recordings" />
+            <label htmlFor="wd-media-recordings">Media Recordings</label><br />
+            
+            <input type="checkbox" id="wd-student-annotation" />
+            <label htmlFor="wd-student-annotation">Student Annotation</label><br />
+            
+            <input type="checkbox" id="wd-file-upload" />
+            <label htmlFor="wd-file-upload">File Uploads</label>
+          </td>
+        </tr>
+        <tr>
+          <td align="right" valign="top">
             <label htmlFor="wd-assign-to">Assign To</label>
             <select id="wd-assign-to">
               <option value="everyone">Everyone</option>
@@ -82,7 +103,7 @@ export default function AssignmentEditor() {
             <label htmlFor="wd-available-from">Available From</label>
           </td>
           <td>
-            <input id="wd-available-from" type="date" />
+            <input id="wd-available-from" type="date" defaultValue="2024-05-06" />
           </td>
         </tr>
         <tr>
@@ -90,7 +111,7 @@ export default function AssignmentEditor() {
             <label htmlFor="wd-available-until">Until</label>
           </td>
           <td>
-            <input id="wd-available-until" type="date" />
+            <input id="wd-available-until" type="date" defaultValue="2024-05-20" />
           </td>
         </tr>
         <button id="wd-save-assignment">Save</button>

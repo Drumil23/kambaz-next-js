@@ -166,10 +166,10 @@ export default function Lab1() {
         Loading an image from the internet: <br />
         <Image
           id="wd-starship"
-          src="https://www.staradvertiser.com/wp-content/uploads/2021/08/web1_Starship-gap2.jpg"
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/SpaceX_Starship_SN8_soars_over_Boca_Chica_-_48.jpg/1200px-SpaceX_Starship_SN8_soars_over_Boca_Chica_-_48.jpg"
           alt="SpaceX Starship"
           width={400}
-          height={267}
+          height={600}
         />
         <br />
         Loading an image from the public folder: <br />
