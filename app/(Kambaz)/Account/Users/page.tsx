@@ -11,7 +11,6 @@ export default function Users() {
   const [users, setUsers] = useState<Awaited<ReturnType<typeof client.findAllUsers>>>([]);
   const [role, setRole] = useState("");
   const [name, setName] = useState("");
-  const [mounted, setMounted] = useState(false);
   const { uid } = useParams();
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const privileged = currentUser && (currentUser.role === "FACULTY" || currentUser.role === "ADMIN" || currentUser.role === "Faculty" || currentUser.role === "Dean");
@@ -72,13 +71,8 @@ export default function Users() {
   };
   
   useEffect(() => {
-    setMounted(true);
     fetchUsers();
-  }, [uid]);
-
-  if (!mounted) {
-    return <div>Loading...</div>;
-  }
+  }, []);
   
   return (
     <div>
