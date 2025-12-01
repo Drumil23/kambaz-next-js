@@ -164,12 +164,11 @@ export default function Lab1() {
       <div id="wd-images">
         <h4>Image tag</h4>
         Loading an image from the internet: <br />
-        <Image
+        <img
           id="wd-starship"
           src="https://upload.wikimedia.org/wikipedia/commons/4/4a/SpaceX_Starship_ignition_during_IFT-5.jpg"
           alt="SpaceX Starship"
           width={400}
-          height={600}
         />
         <br />
         Loading an image from the public folder: <br />
