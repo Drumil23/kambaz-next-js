@@ -13,6 +13,11 @@ export const findAllUsers = async () => {
   return response.data;
 };
 
+export const findUsersByRole = async (role: string) => {
+  const response = await axiosWithCredentials.get(`${USERS_API}?role=${role}`);
+  return response.data;
+};
+
 
 export type Credentials = { username: string; password: string };
 
