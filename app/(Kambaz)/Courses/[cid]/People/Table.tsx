@@ -6,7 +6,6 @@ import { createUser, updateUser, deleteUser } from "../../usersClient";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import PeopleDetails from "./Details";
-import Link from "next/link";
 
 interface User {
     _id: string;
@@ -27,7 +26,7 @@ export default function PeopleTable({
     fetchUsers: () => void; 
 }) {
     const { currentUser } = useSelector((state: RootState) => state.accountReducer);
-    const privileged = currentUser && (currentUser.role === "Faculty" || currentUser.role === "Dean");
+    const privileged = currentUser && (currentUser.role === "Faculty" || currentUser.role === "Dean" || currentUser.role === "FACULTY" || currentUser.role === "ADMIN");
     const [showDetails, setShowDetails] = useState(false);
     const [showUserId, setShowUserId] = useState<string | null>(null);
 
