@@ -94,9 +94,6 @@ export default function PeopleTable({
                     }}
                 />
             )}
-            <div className="d-flex justify-content-between align-items-center mb-2">
-                {privileged && <Button onClick={onAdd} variant="success">Add user</Button>}
-            </div>
             <Table striped>
                 <thead>
                     <tr>

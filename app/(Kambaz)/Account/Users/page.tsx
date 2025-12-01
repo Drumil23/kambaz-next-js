@@ -1,7 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { FormControl } from "react-bootstrap";
+import { FormControl, Button } from "react-bootstrap";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
 import PeopleTable from "../../Courses/[cid]/People/Table";
 import * as client from "../client";
 
@@ -11,6 +13,8 @@ export default function Users() {
   const [name, setName] = useState("");
   const [mounted, setMounted] = useState(false);
   const { uid } = useParams();
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+  const privileged = currentUser && (currentUser.role === "FACULTY" || currentUser.role === "ADMIN" || currentUser.role === "Faculty" || currentUser.role === "Dean");
   
   const fetchUsers = async () => {
     const fetched = await client.findAllUsers();
@@ -37,6 +41,35 @@ export default function Users() {
       fetchUsers();
     }
   };
+
+  const onAdd = async () => {
+    const username = prompt('Username');
+    if (!username) return;
+    const password = prompt('Password') || 'password123';
+    const firstName = prompt('First name') || '';
+    const lastName = prompt('Last name') || '';
+    const loginId = prompt('Login ID') || username;
+    const section = prompt('Section') || 'S101';
+    const role = prompt('Role (STUDENT|TA|FACULTY|ADMIN)') || 'STUDENT';
+    const newUser = { 
+      username,
+      password,
+      firstName, 
+      lastName, 
+      loginId, 
+      section, 
+      role, 
+      lastActivity: new Date().toISOString().slice(0,10), 
+      totalActivity: '0h 00m' 
+    };
+    try {
+      await client.signup(newUser);
+      fetchUsers();
+    } catch (err: unknown) {
+      console.error('Create user failed', err);
+      alert('Failed to create user');
+    }
+  };
   
   useEffect(() => {
     setMounted(true);
@@ -50,24 +83,28 @@ export default function Users() {
   return (
     <div>
       <h3>Users</h3>
-      <div className="mb-3">
-        <FormControl 
-          onChange={(e) => filterUsersByName(e.target.value)} 
-          placeholder="Search people"
-          className="float-start w-25 me-2 wd-filter-by-name" 
-        />
-        <select 
-          value={role} 
-          onChange={(e) => filterUsersByRole(e.target.value)}
-          className="form-select float-start w-25 wd-select-role"
-        >
-          <option value="">All Roles</option>
-          <option value="STUDENT">Students</option>
-          <option value="TA">Assistants</option>
-          <option value="FACULTY">Faculty</option>
-          <option value="ADMIN">Administrators</option>
-        </select>
-        <div className="clearfix"></div>
+      <div className="mb-3 d-flex justify-content-between align-items-center">
+        <div className="d-flex gap-2">
+          <FormControl 
+            onChange={(e) => filterUsersByName(e.target.value)} 
+            placeholder="Search people"
+            style={{ width: '250px' }}
+            className="wd-filter-by-name" 
+          />
+          <select 
+            value={role} 
+            onChange={(e) => filterUsersByRole(e.target.value)}
+            className="form-select wd-select-role"
+            style={{ width: '200px' }}
+          >
+            <option value="">All Roles</option>
+            <option value="STUDENT">Students</option>
+            <option value="TA">Assistants</option>
+            <option value="FACULTY">Faculty</option>
+            <option value="ADMIN">Administrators</option>
+          </select>
+        </div>
+        {privileged && <Button onClick={onAdd} variant="success">Add user</Button>}
       </div>
       <PeopleTable users={users} fetchUsers={fetchUsers} />
     </div>
