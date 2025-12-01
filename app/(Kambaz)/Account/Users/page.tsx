@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import PeopleTable from "../../Courses/[cid]/People/Table";
 import * as client from "../client";
+import { FaPlus } from "react-icons/fa";
 
 export default function Users() {
   const [users, setUsers] = useState<Awaited<ReturnType<typeof client.findAllUsers>>>([]);
@@ -73,9 +74,27 @@ export default function Users() {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  const createUser = async () => {
+    const user = await client.createUser({
+      firstName: "New",
+      lastName: `User${users.length + 1}`,
+      username: `newuser${Date.now()}`,
+      password: "password123",
+      email: `email${users.length + 1}@neu.edu`,
+      section: "S101",
+      role: "STUDENT",
+    });
+    setUsers([...users, user]);
+  };
+
   
   return (
     <div>
+      <button onClick={createUser} className="float-end btn btn-danger wd-add-people">
+        <FaPlus className="me-2" />
+        Users
+      </button>
       <h3>Users</h3>
       <div className="mb-3 d-flex justify-content-between align-items-center">
         <div className="d-flex gap-2">

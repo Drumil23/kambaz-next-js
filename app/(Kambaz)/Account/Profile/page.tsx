@@ -65,7 +65,7 @@ export default function Profile() {
    <div className="wd-profile-screen">
      <h3>Profile</h3>
      {profile && (
-       <div>
+       <div style={{ maxWidth: '500px' }}>
          <FormControl id="wd-username" className="mb-2"
            defaultValue={profile.username}
            onChange={(e) => setProfile({ ...profile, username: e.target.value }) } />
@@ -85,14 +85,16 @@ export default function Profile() {
            defaultValue={profile.email}
            onChange={(e) => setProfile({ ...profile, email: e.target.value })} />
          <select className="form-control mb-2" id="wd-role" 
+           value={profile.role}
            onChange={(e) => setProfile({ ...profile, role: e.target.value })} >
            <option value="USER">User</option>
            <option value="ADMIN">Admin</option>
-           <option value="FACULTY">Faculty</option>{" "}
+           <option value="FACULTY">Faculty</option>
            <option value="STUDENT">Student</option>
+           <option value="TA">TA</option>
          </select>
-          <Button onClick={updateProfile} className="btn btn-primary w-100 mb-2"> Update </Button>
-          <Button onClick={signout} className="wd-signout-btn btn btn-danger w-100"> Sign out </Button>
+          <Button onClick={updateProfile} className="btn btn-primary mb-2" style={{ width: '150px' }}> Update </Button>
+          <Button onClick={signout} className="wd-signout-btn btn btn-danger ms-2" style={{ width: '150px' }}> Sign out </Button>
        </div>
      )}
    </div>

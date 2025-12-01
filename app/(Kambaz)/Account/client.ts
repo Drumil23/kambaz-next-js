@@ -92,3 +92,8 @@ export const createCourse = async (course: Omit<Course, "_id">): Promise<Course>
   const response = await axiosWithCredentials.post<Course>(`${USERS_API}/current/courses`, course);
   return response.data;
 };
+
+export const createUser = async (user: Omit<User, "_id">): Promise<User> => {
+  const response = await axios.post<User>(`${USERS_API}`, user);
+  return response.data;
+};
