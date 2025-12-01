@@ -1,7 +1,6 @@
 import axios from "axios";
 import { HTTP_SERVER } from "../../lib/config";
 
-// Create axios instance with credentials enabled (no baseURL to avoid double concatenation)
 const axiosWithCredentials = axios.create({
   withCredentials: true,
 });
@@ -17,6 +16,17 @@ export const findUsersByRole = async (role: string) => {
   const response = await axiosWithCredentials.get(`${USERS_API}?role=${role}`);
   return response.data;
 };
+
+export const findUsersByPartialName = async (name: string) => {
+  const response = await axiosWithCredentials.get(`${USERS_API}?name=${name}`);
+  return response.data;
+};
+
+export const findUserById = async (id: string) => {
+  const response = await axiosWithCredentials.get(`${USERS_API}/${id}`);
+  return response.data;
+};
+
 
 
 export type Credentials = { username: string; password: string };
@@ -67,6 +77,10 @@ export const signout = async (): Promise<void> => {
 export const updateUser = async (user: User): Promise<User> => {
   const response = await axiosWithCredentials.put<User>(`${USERS_API}/${user._id}`, user);
   return response.data;
+};
+
+export const deleteUser = async (userId: string): Promise<void> => {
+  await axiosWithCredentials.delete(`${USERS_API}/${userId}`);
 };
 
 export const findMyCourses = async (): Promise<Course[]> => {

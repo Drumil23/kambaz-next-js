@@ -5,6 +5,8 @@ import { useState } from "react";
 import { createUser, updateUser, deleteUser } from "../../usersClient";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
+import PeopleDetails from "./Details";
+import Link from "next/link";
 
 interface User {
     _id: string;
@@ -26,6 +28,8 @@ export default function PeopleTable({
 }) {
     const { currentUser } = useSelector((state: RootState) => state.accountReducer);
     const privileged = currentUser && (currentUser.role === "Faculty" || currentUser.role === "Dean");
+    const [showDetails, setShowDetails] = useState(false);
+    const [showUserId, setShowUserId] = useState<string | null>(null);
 
     const onAdd = async () => {
         const firstName = prompt('First name');
@@ -82,6 +86,15 @@ export default function PeopleTable({
     
     return (
         <div id="wd-people-table">
+            {showDetails && (
+                <PeopleDetails
+                    uid={showUserId}
+                    onClose={() => {
+                        setShowDetails(false);
+                        fetchUsers();
+                    }}
+                />
+            )}
             <div className="d-flex justify-content-between align-items-center mb-2">
                 {privileged && <Button onClick={onAdd} variant="success">Add user</Button>}
             </div>
@@ -101,10 +114,19 @@ export default function PeopleTable({
                     {users.map((user: User) => (
                         <tr key={user._id}>
                             <td className="wd-full-name text-nowrap">
-                                <FaUserCircle className="me-2 fs-1 text-secondary" />
-                                <span className="wd-first-name">{user.firstName}</span>
-                                {" "}
-                                <span className="wd-last-name">{user.lastName}</span>
+                                <span 
+                                    className="text-decoration-none"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => {
+                                        setShowDetails(true);
+                                        setShowUserId(user._id);
+                                    }}
+                                >
+                                    <FaUserCircle className="me-2 fs-1 text-secondary" />
+                                    <span className="wd-first-name">{user.firstName}</span>
+                                    {" "}
+                                    <span className="wd-last-name">{user.lastName}</span>
+                                </span>
                             </td>
                             <td className="wd-login-id">{user.loginId}</td>
                             <td className="wd-section">{user.section}</td>

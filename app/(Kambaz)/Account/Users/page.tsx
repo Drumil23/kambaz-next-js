@@ -8,6 +8,7 @@ import * as client from "../client";
 export default function Users() {
   const [users, setUsers] = useState<Awaited<ReturnType<typeof client.findAllUsers>>>([]);
   const [role, setRole] = useState("");
+  const [name, setName] = useState("");
   const { uid } = useParams();
   
   const fetchUsers = async () => {
@@ -25,6 +26,16 @@ export default function Users() {
       setUsers(allUsers);
     }
   };
+
+  const filterUsersByName = async (name: string) => {
+    setName(name);
+    if (name) {
+      const users = await client.findUsersByPartialName(name);
+      setUsers(users);
+    } else {
+      fetchUsers();
+    }
+  };
   
   useEffect(() => {
     fetchUsers();
@@ -33,6 +44,11 @@ export default function Users() {
   return (
     <div>
       <h3>Users</h3>
+      <FormControl 
+        onChange={(e) => filterUsersByName(e.target.value)} 
+        placeholder="Search people"
+        className="float-start w-25 me-2 wd-filter-by-name" 
+      />
       <select 
         value={role} 
         onChange={(e) => filterUsersByRole(e.target.value)}
