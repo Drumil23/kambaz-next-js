@@ -38,9 +38,12 @@ const modulesSlice = createSlice({
       const moduleId = action.payload;
       state.modules = state.modules.map((m) => (m._id === moduleId ? { ...m, editing: true } as Module : m));
     },
+    setModules: (state, action: PayloadAction<Module[]>) => {
+      state.modules = action.payload;
+    },
   },
 });
 
-export const { addModule, deleteModule, updateModule, editModule } = modulesSlice.actions;
+export const { addModule, deleteModule, updateModule, editModule, setModules } = modulesSlice.actions;
 export default modulesSlice.reducer;
 

@@ -35,7 +35,7 @@ export const deleteModule = async (moduleId: string): Promise<{ status: string }
   return response.data;
 };
 
-export const updateModule = async (module: Module): Promise<Module> => {
-  const { data } = await axios.put<Module>(`${MODULES_API}/${module._id}`, module);
+export const updateModule = async (courseId: string, module: Module): Promise<Module> => {
+  const { data } = await axios.put<Module>(`${COURSES_API}/${courseId}/modules/${module._id}`, module);
   return data;
 };

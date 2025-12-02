@@ -5,10 +5,11 @@ import ModulesControls from "./ModulesControls";
 import { BsGripVertical } from "react-icons/bs";
 import ModuleControlButtons from "./ModuleControlButtons";
 import { useParams } from "next/navigation";
-import { addModule, editModule, updateModule, deleteModule }
+import { addModule, editModule, updateModule, setModules, deleteModule }
   from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../store";
+import * as client from "./client";
 
 import type { Module } from "../../../Database/types";
 // UI extends the database Module with optional editing flag
@@ -35,6 +36,14 @@ export default function Modules() {
   const handleUpdateModule = (module: UIModule) => {
     // Strip UI-only `editing` flag at runtime by asserting to Module when dispatching
     dispatch(updateModule(module as unknown as Module));
+  };
+
+  const onUpdateModule = async (module: UIModule) => {
+    await client.updateModule(cid as string, module as unknown as client.Module);
+    const newModules = modules.map((m: UIModule) =>
+      m._id === module._id ? module : m
+    );
+    dispatch(setModules(newModules as Module[]));
   };
 
 
