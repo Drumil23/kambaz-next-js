@@ -2,10 +2,10 @@ import { ListGroupItem } from 'react-bootstrap';
 export interface Todo {
     done: boolean;
     title: string;
-    status: 'COMPLETED' | 'PENDING' | 'IN_PROGRESS';
+    status: 'COMPLETED' | 'PENDING' | 'IN_PROGRESS' | 'DEFERRED';
 }
 const TodoItem = ( { todo = { done: true, title: 'Buy milk',
-                              status: 'COMPLETED' } }) => {
+                              status: 'COMPLETED' as const } }: { todo?: Todo }) => {
  return (
    <ListGroupItem>
      <input type="checkbox" className="me-2"

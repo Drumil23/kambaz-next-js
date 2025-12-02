@@ -25,9 +25,10 @@ export default function Lab2() {
             <Container>
             <h2>Lab 2 - Cascading Style Sheets</h2>
             <h3>Styling with the STYLE attribute</h3>
-            <p style={{
+            <p id="wd-p-style-attribute" style={{
                 backgroundColor: "blue",
-                color: "white"
+                color: "white",
+                padding: "10px"
             }}>
                 Style attribute allows configuring look and feel
                 right on the element. Although it is very convenient
