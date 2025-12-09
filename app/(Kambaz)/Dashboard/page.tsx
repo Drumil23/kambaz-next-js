@@ -47,41 +47,45 @@ export default function Dashboard() {
       )}
       <hr />
 
-      <h5>New Course</h5>
-      <div className="mb-3">
-        <div className="d-flex align-items-start">
-          <input
-            className="form-control flex-grow-1 me-3"
-            value={course.name}
-            onChange={(e) => setCourse({ ...course, name: e.target.value })}
-            aria-label="Course name"
-            id="wd-new-course-name"
-          />
+      {currentUser && (currentUser.role === "Faculty" || currentUser.role === "Dean") && (
+        <>
+          <h5>New Course</h5>
+          <div className="mb-3">
+            <div className="d-flex align-items-start">
+              <input
+                className="form-control flex-grow-1 me-3"
+                value={course.name}
+                onChange={(e) => setCourse({ ...course, name: e.target.value })}
+                aria-label="Course name"
+                id="wd-new-course-name"
+              />
 
-          <div className="d-flex flex-column">
-            <button
-              className="btn btn-primary mb-2"
-              id="wd-add-new-course-click"
-              onClick={() => dispatch(addNewCourse(course))}
-            >
-              Add
-            </button>
-            <button className="btn btn-warning" id="wd-update-course-click" onClick={() => dispatch(updateCourse(course))}>
-              Update
-            </button>
+              <div className="d-flex flex-column">
+                <button
+                  className="btn btn-primary mb-2"
+                  id="wd-add-new-course-click"
+                  onClick={() => dispatch(addNewCourse(course))}
+                >
+                  Add
+                </button>
+                <button className="btn btn-warning" id="wd-update-course-click" onClick={() => dispatch(updateCourse(course))}>
+                  Update
+                </button>
+              </div>
+            </div>
+
+            <textarea
+              className="form-control mt-3"
+              rows={4}
+              value={course.description}
+              onChange={(e) => setCourse({ ...course, description: e.target.value })}
+              aria-label="Course description"
+              id="wd-new-course-description"
+            />
           </div>
-        </div>
-
-        <textarea
-          className="form-control mt-3"
-          rows={4}
-          value={course.description}
-          onChange={(e) => setCourse({ ...course, description: e.target.value })}
-          aria-label="Course description"
-          id="wd-new-course-description"
-        />
-      </div>
-      <hr />
+          <hr />
+        </>
+      )}
       
 
       {/* Enrolled courses for the current user */}
@@ -158,13 +162,26 @@ export default function Dashboard() {
                             else alert('You must be enrolled in the course to open it.');
                           }}> Go </Button>
                           
-                          <Button onClick={(event) => {
-                            event.preventDefault();
-                            dispatch(deleteCourse(courseItem._id));
-                          }} className="btn btn-danger"
-                            id="wd-delete-course-click">
-                            Delete
-                          </Button>
+                          {currentUser && (currentUser.role === "Faculty" || currentUser.role === "Dean") && (
+                            <>
+                              <Button onClick={(event) => {
+                                event.preventDefault();
+                                dispatch(deleteCourse(courseItem._id));
+                              }} className="btn btn-danger"
+                                id="wd-delete-course-click">
+                                Delete
+                              </Button>
+                              
+                              <Button id="wd-edit-course-click"
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  setCourse(courseItem);
+                                }}
+                                className="btn btn-warning" >
+                                Edit
+                              </Button>
+                            </>
+                          )}
                           
                           {currentUser && (
                             isEnrolled ? (
@@ -177,15 +194,6 @@ export default function Dashboard() {
                               </Button>
                             )
                           )}
-                          
-                          <Button id="wd-edit-course-click"
-                            onClick={(event) => {
-                              event.preventDefault();
-                              setCourse(courseItem);
-                            }}
-                            className="btn btn-warning" >
-                            Edit
-                          </Button>
                         </div>
                       </CardBody>
                     </div>

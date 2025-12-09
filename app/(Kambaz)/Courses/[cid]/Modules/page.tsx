@@ -19,8 +19,10 @@ export default function Modules() {
   const { cid } = useParams();
   // use modules from Redux store as source-of-truth
   const modules = useSelector((state: RootState) => state.modulesReducer.modules) as UIModule[];
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const [moduleName, setModuleName] = useState("");
   const dispatch = useDispatch();
+  const isFacultyOrDean = currentUser?.role === "Faculty" || currentUser?.role === "Dean";
   // wrapper handlers (avoid name collisions with imported action creators)
   const handleAddModule = () => {
     dispatch(addModule({ name: moduleName, course: cid as string }));
@@ -40,7 +42,9 @@ export default function Modules() {
 
   return (
     <div>
-  <ModulesControls moduleName={moduleName} setModuleName={setModuleName} addModule={handleAddModule} isHeader />
+      {isFacultyOrDean && (
+        <ModulesControls moduleName={moduleName} setModuleName={setModuleName} addModule={handleAddModule} isHeader />
+      )}
       <br /><br /><br /><br />
       <ListGroup className="rounded-0" id="wd-modules">
           {modules
@@ -50,7 +54,7 @@ export default function Modules() {
               <div className="wd-title p-3 ps-2 bg-secondary">
                 <BsGripVertical className="me-2 fs-3" />
                 {!module.editing && module.name}
-                {module.editing && (
+                {module.editing && isFacultyOrDean && (
                   <FormControl
                     className="w-50 d-inline-block"
                     defaultValue={module.name}
@@ -62,7 +66,9 @@ export default function Modules() {
                     }}
                   />
                 )}
-                <ModuleControlButtons moduleId={module._id} deleteModule={handleDeleteModule} editModule={handleEditModule} />
+                {isFacultyOrDean && (
+                  <ModuleControlButtons moduleId={module._id} deleteModule={handleDeleteModule} editModule={handleEditModule} />
+                )}
               </div>
               {module.lessons && (
                 <ListGroup className="wd-lessons rounded-0">
