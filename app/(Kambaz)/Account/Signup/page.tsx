@@ -28,12 +28,12 @@ export default function Signup() {
     return (
         <div id="wd-signup-screen">
             <h1>Sign up</h1>
-            <FormControl value={user.username} onChange={(e) => setUser({ ...user, username: e.target.value })}
-                placeholder="username" className="wd-username mb-2" /><br />
-            <FormControl value={user.password} onChange={(e) => setUser({ ...user, password: e.target.value })}
-                placeholder="password" type="password" className="wd-password mb-2" /><br />
-            <button id="wd-signup-btn" onClick={signup} className="btn btn-primary w-100 mb-2"> Sign up </button><br />
-            <Link href="/Account/Signin"> Sign in </Link>
+            <FormControl id="wd-username" value={user.username} onChange={(e) => setUser({ ...user, username: e.target.value })}
+                placeholder="username" className="wd-username mb-2" />
+            <FormControl id="wd-password" value={user.password} onChange={(e) => setUser({ ...user, password: e.target.value })}
+                placeholder="password" type="password" className="wd-password mb-2" />
+            <button id="wd-signup-btn" onClick={signup} className="btn btn-primary w-100 mb-2"> Sign up </button>
+            <Link id="wd-signin-link" href="/Account/Signin"> Sign in </Link>
         </div>
     );
 }

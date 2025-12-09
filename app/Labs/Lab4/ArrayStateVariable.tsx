@@ -19,7 +19,6 @@ export default function ArrayStateVariable() {
           </ListGroupItem>
         ))}
       </ListGroup>
-
       <hr />
     </div>
   );
