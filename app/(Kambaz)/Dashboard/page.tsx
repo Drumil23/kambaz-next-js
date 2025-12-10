@@ -198,7 +198,7 @@ export default function Dashboard() {
                         <CardText className="wd-dashboard-course-description overflow-hidden" style={{ height: "100px" }}>{courseItem.description}</CardText>
                         <Button variant="primary" onClick={() => {
                           const isEnrolled = enrollments.some(e => e.user === currentUser._id && e.course === courseItem._id);
-                          const isPrivileged = currentUser?.role === "Faculty" || currentUser?.role === "Dean";
+                          const isPrivileged = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
                           const canOpen = isPrivileged || isEnrolled;
                           if (canOpen) window.location.href = `/Courses/${courseItem._id}/Home`;
                           else alert('You must be enrolled in the course to open it.');
@@ -232,13 +232,13 @@ export default function Dashboard() {
                           <Button variant="primary" onClick={() => {
                             if (!currentUser) { alert('Please sign in to open a course.'); return; }
                             const isEnrolled = enrollments.some(e => e.user === currentUser._id && e.course === courseItem._id);
-                            const isPrivileged = currentUser?.role === "Faculty" || currentUser?.role === "Dean";
+                            const isPrivileged = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
                             const allowed = isPrivileged || isEnrolled;
                             if (allowed) window.location.href = `/Courses/${courseItem._id}/Home`;
                             else alert('You must be enrolled in the course to open it.');
                           }}> Go </Button>
                           
-                          {currentUser && (currentUser.role === "Faculty" || currentUser.role === "Dean") && (
+                          {currentUser && (currentUser.role === "FACULTY" || currentUser.role === "ADMIN") && (
                             <>
                               <Button onClick={(event) => {
                                 event.preventDefault();

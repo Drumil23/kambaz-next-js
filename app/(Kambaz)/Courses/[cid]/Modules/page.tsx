@@ -23,7 +23,7 @@ export default function Modules() {
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const [moduleName, setModuleName] = useState("");
   const dispatch = useDispatch();
-  const isFacultyOrDean = currentUser?.role === "Faculty" || currentUser?.role === "Dean";
+  const isFacultyOrDean = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
   
   // Fetch modules on mount
   useEffect(() => {
