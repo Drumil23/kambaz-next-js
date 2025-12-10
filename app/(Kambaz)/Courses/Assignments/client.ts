@@ -7,8 +7,21 @@ const ASSIGNMENTS_API = `${HTTP_SERVER}/api/assignments`;
 export const fetchAssignments = async (courseId?: string): Promise<Assignment[]> => {
   const params: Record<string, string> = {};
   if (courseId) params.course = courseId;
-  const { data } = await axios.get<Assignment[]>(ASSIGNMENTS_API, { params });
-  return data;
+  console.log("🔍 Fetching assignments from:", ASSIGNMENTS_API, "with params:", params);
+  console.log("🌐 Full URL:", `${ASSIGNMENTS_API}${courseId ? `?course=${courseId}` : ''}`);
+  try {
+    const { data } = await axios.get<Assignment[]>(ASSIGNMENTS_API, { params });
+    console.log("✅ Successfully fetched", data.length, "assignments:", data);
+    return data;
+  } catch (error) {
+    console.error("❌ Failed to fetch assignments:", error);
+    if (axios.isAxiosError(error)) {
+      console.error("Response status:", error.response?.status);
+      console.error("Response data:", error.response?.data);
+      console.error("Server might not be running on", HTTP_SERVER);
+    }
+    throw error;
+  }
 };
 
 export const fetchAssignment = async (id: string): Promise<Assignment> => {

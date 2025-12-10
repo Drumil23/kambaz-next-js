@@ -26,7 +26,7 @@ export default function Dashboard() {
   });
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const enrollments = useSelector((state: RootState) => state.enrollmentsReducer.enrollments);
-  const [showAll, setShowAll] = useState(false);
+  const [showAll, setShowAll] = useState(true); // Changed to true to show all courses by default
   
   // Fetch courses and enrollments on mount
   useEffect(() => {
@@ -65,6 +65,11 @@ export default function Dashboard() {
   const myEnrollmentCount = currentUser
     ? enrollments.filter((e) => e.user === currentUser._id).length
     : 0;
+
+  console.log("Dashboard - currentUser:", currentUser);
+  console.log("Dashboard - enrollments:", enrollments);
+  console.log("Dashboard - courses:", courses);
+  console.log("Dashboard - myEnrollmentCount:", myEnrollmentCount);
 
   const handleAddCourse = async () => {
     try {
@@ -178,7 +183,7 @@ export default function Dashboard() {
         )}
         <div>
           <Button variant="primary" className="me-2" onClick={() => setShowAll(!showAll)} id="wd-enrollments-toggle">
-            Enrollments
+            {showAll ? 'Show My Enrollments Only' : 'Show All Courses'}
           </Button>
         </div>
       </div>

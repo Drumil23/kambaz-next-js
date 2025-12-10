@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 import { Form, Button, Card, Badge, InputGroup, Modal } from "react-bootstrap";
 import { FaPlus, FaSearch, FaRegFileAlt, FaTrash } from "react-icons/fa";
 import { BsThreeDotsVertical, BsGripVertical } from "react-icons/bs";
@@ -24,6 +26,8 @@ const formatDate = (dateString: string): string => {
 
 export default function Assignments() {
     const { cid } = useParams();
+    const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+    const isFacultyOrAdmin = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
     const [searchTerm, setSearchTerm] = useState("");
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedDeleteId, setSelectedDeleteId] = useState<string | null>(null);
@@ -33,7 +37,9 @@ export default function Assignments() {
         const cidStr = Array.isArray(cid) ? cid[0] : cid;
         (async () => {
             try {
+                console.log("Fetching assignments for course:", cidStr);
                 const data = await assignmentsClient.fetchAssignments(cidStr as string);
+                console.log("Fetched assignments:", data);
                 setAssignments(data);
             } catch (err: unknown) {
                 console.error('Failed to load assignments', err);
@@ -41,8 +47,9 @@ export default function Assignments() {
         })();
     }, [cid]);
 
+    const cidStr = Array.isArray(cid) ? cid[0] : cid;
     const courseAssignments = assignments
-        .filter((assignment) => assignment.course === cid)
+        .filter((assignment) => assignment.course === cidStr)
         .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()) as Assignment[];
 
     const filteredAssignments = courseAssignments.filter((assignment) => assignment.title.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -118,18 +125,20 @@ export default function Assignments() {
                                         </div>
                                     </Link>
                                 </div>
-                                <div className="d-flex align-items-center ms-3">
-                                    {assignment.status === "PUBLISHED" && <GreenCheckmark />}
-                                    <Button variant="link" className="text-dark p-0 ms-2"><BsThreeDotsVertical /></Button>
-                                    <Button variant="link" className="text-danger p-0 ms-2" title="Delete assignment" onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        setSelectedDeleteId(assignment._id);
-                                        setShowDeleteModal(true);
-                                    }}>
-                                        <FaTrash />
-                                    </Button>
-                                </div>
+                                {isFacultyOrAdmin && (
+                                    <div className="d-flex align-items-center ms-3">
+                                        {assignment.status === "PUBLISHED" && <GreenCheckmark />}
+                                        <Button variant="link" className="text-dark p-0 ms-2"><BsThreeDotsVertical /></Button>
+                                        <Button variant="link" className="text-danger p-0 ms-2" title="Delete assignment" onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setSelectedDeleteId(assignment._id);
+                                            setShowDeleteModal(true);
+                                        }}>
+                                            <FaTrash />
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}

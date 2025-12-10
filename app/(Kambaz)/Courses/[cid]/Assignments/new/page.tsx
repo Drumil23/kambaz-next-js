@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import type { Assignment } from "../../../../Database/types";
@@ -10,6 +10,9 @@ import { RootState } from '../../../../store';
 export default function NewAssignment() {
   const { cid } = useParams();
   const router = useRouter();
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+  const isFacultyOrAdmin = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
+  
   const [assignment, setAssignment] = useState<Partial<Assignment>>({
     title: "",
     description: "",
@@ -21,7 +24,18 @@ export default function NewAssignment() {
     type: "Assignment",
   });
 
-  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+  // Redirect students away from this page
+  useEffect(() => {
+    if (currentUser && !isFacultyOrAdmin) {
+      alert("You don't have permission to create assignments.");
+      router.push(`/Courses/${cid}/Assignments`);
+    }
+  }, [currentUser, isFacultyOrAdmin, router, cid]);
+
+  // Don't render the form for students
+  if (!isFacultyOrAdmin) {
+    return <div className="p-4">Redirecting...</div>;
+  }
 
   const save = () => {
     console.log("Saving assignment:", assignment);
