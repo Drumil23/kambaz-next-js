@@ -49,6 +49,11 @@ export const profile = async (): Promise<User | null> => {
   return response.data;
 };
 
+export const findCoursesForUser = async (userId: string): Promise<Course[]> => {
+  const response = await axiosWithCredentials.get<Course[]>(`${USERS_API}/${userId}/courses`);
+  return response.data;
+};
+
 export const signout = async (): Promise<void> => {
   await axiosWithCredentials.post(`${USERS_API}/signout`);
 };

@@ -30,12 +30,12 @@ export const createModuleForCourse = async (courseId: string, module: Omit<Modul
   return response.data;
 };
 
-export const deleteModule = async (moduleId: string): Promise<{ status: string }> => {
-  const response = await axios.delete<{ status: string }>(`${MODULES_API}/${moduleId}`);
+export const deleteModule = async (courseId: string, moduleId: string): Promise<{ status: string }> => {
+  const response = await axios.delete<{ status: string }>(`${COURSES_API}/${courseId}/modules/${moduleId}`);
   return response.data;
 };
 
-export const updateModule = async (module: Module): Promise<Module> => {
-  const { data } = await axios.put<Module>(`${MODULES_API}/${module._id}`, module);
+export const updateModule = async (courseId: string, module: Module): Promise<Module> => {
+  const { data } = await axios.put<Module>(`${COURSES_API}/${courseId}/modules/${module._id}`, module);
   return data;
 };

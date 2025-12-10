@@ -1,14 +1,15 @@
 "use client"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ListGroup, ListGroupItem, FormControl } from "react-bootstrap";
 import ModulesControls from "./ModulesControls";
 import { BsGripVertical } from "react-icons/bs";
 import ModuleControlButtons from "./ModuleControlButtons";
 import { useParams } from "next/navigation";
-import { addModule, editModule, updateModule, deleteModule }
+import { addModule, editModule, updateModule, deleteModule, setModules }
   from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../store";
+import * as modulesClient from "./client";
 
 import type { Module } from "../../../Database/types";
 // UI extends the database Module with optional editing flag
@@ -23,20 +24,55 @@ export default function Modules() {
   const [moduleName, setModuleName] = useState("");
   const dispatch = useDispatch();
   const isFacultyOrDean = currentUser?.role === "Faculty" || currentUser?.role === "Dean";
+  
+  // Fetch modules on mount
+  useEffect(() => {
+    const fetchModules = async () => {
+      if (cid) {
+        try {
+          const fetchedModules = await modulesClient.findModulesForCourse(cid as string);
+          dispatch(setModules(fetchedModules as unknown as Module[]));
+        } catch (error) {
+          console.error("Error fetching modules:", error);
+        }
+      }
+    };
+    fetchModules();
+  }, [cid, dispatch]);
+  
   // wrapper handlers (avoid name collisions with imported action creators)
-  const handleAddModule = () => {
-    dispatch(addModule({ name: moduleName, course: cid as string }));
-    setModuleName("");
+  const handleAddModule = async () => {
+    try {
+      const newModule = await modulesClient.createModuleForCourse(cid as string, { name: moduleName, course: cid as string });
+      dispatch(addModule(newModule as unknown as Partial<Module>));
+      setModuleName("");
+    } catch (error) {
+      console.error("Error creating module:", error);
+      alert("Failed to create module");
+    }
   };
-  const handleDeleteModule = (moduleId: string) => {
-    dispatch(deleteModule(moduleId));
+  const handleDeleteModule = async (moduleId: string) => {
+    try {
+      await modulesClient.deleteModule(cid as string, moduleId);
+      dispatch(deleteModule(moduleId));
+    } catch (error) {
+      console.error("Error deleting module:", error);
+      alert("Failed to delete module");
+    }
   };
   const handleEditModule = (moduleId: string) => {
     dispatch(editModule(moduleId));
   };
-  const handleUpdateModule = (module: UIModule) => {
+  const handleUpdateModule = async (module: UIModule) => {
     // Strip UI-only `editing` flag at runtime by asserting to Module when dispatching
-    dispatch(updateModule(module as unknown as Module));
+    try {
+      if (module.editing === false) {
+        await modulesClient.updateModule(cid as string, module as unknown as modulesClient.Module);
+      }
+      dispatch(updateModule(module as unknown as Module));
+    } catch (error) {
+      console.error("Error updating module:", error);
+    }
   };
 
 
