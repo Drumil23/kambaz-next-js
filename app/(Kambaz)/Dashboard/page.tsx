@@ -63,7 +63,7 @@ export default function Dashboard() {
 
   const handleAddCourse = async () => {
     try {
-      const newCourse = await coursesClient.createCourse(course);
+      const newCourse = await coursesClient.createCourse(course as Partial<coursesClient.Course>);
       dispatch(addNewCourse(newCourse));
     } catch (error) {
       console.error("Error creating course:", error);
