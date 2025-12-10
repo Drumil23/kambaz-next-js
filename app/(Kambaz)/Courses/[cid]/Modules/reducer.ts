@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { modules } from "../../../Database";
 import { v4 as uuidv4 } from "uuid";
 import type { Module } from "../../../Database/types";
 
@@ -8,7 +7,7 @@ interface ModulesState {
 }
 
 const initialState: ModulesState = {
-  modules: modules as Module[],
+  modules: [],
 };
 
 const modulesSlice = createSlice({

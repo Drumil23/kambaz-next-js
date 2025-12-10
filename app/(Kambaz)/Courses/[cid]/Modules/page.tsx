@@ -30,10 +30,13 @@ export default function Modules() {
     const fetchModules = async () => {
       if (cid) {
         try {
+          console.log("Fetching modules for course:", cid);
           const fetchedModules = await modulesClient.findModulesForCourse(cid as string);
+          console.log("Fetched modules:", fetchedModules);
           dispatch(setModules(fetchedModules as unknown as Module[]));
         } catch (error) {
           console.error("Error fetching modules:", error);
+          alert("Failed to load modules. Check console for details.");
         }
       }
     };
@@ -77,15 +80,13 @@ export default function Modules() {
 
 
   return (
-    <div>
+    <div suppressHydrationWarning>
       {isFacultyOrDean && (
         <ModulesControls moduleName={moduleName} setModuleName={setModuleName} addModule={handleAddModule} isHeader />
       )}
       <br /><br /><br /><br />
       <ListGroup className="rounded-0" id="wd-modules">
-          {modules
-          .filter((module) => module.course === cid)
-          .map((module: UIModule) => (
+          {modules.map((module: UIModule) => (
             <ListGroupItem key={module._id ?? module.name} className="wd-module p-0 mb-5 fs-5 border-gray">
               <div className="wd-title p-3 ps-2 bg-secondary">
                 <BsGripVertical className="me-2 fs-3" />

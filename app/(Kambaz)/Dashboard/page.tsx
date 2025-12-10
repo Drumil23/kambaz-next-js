@@ -32,15 +32,20 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log("Fetching courses from:", `${HTTP_SERVER}/api/courses`);
         // Fetch all courses
         const fetchedCourses = await coursesClient.fetchAllCourses();
+        console.log("Fetched courses:", fetchedCourses);
         dispatch(setCourses(fetchedCourses));
         
+        console.log("Fetching enrollments from:", `${HTTP_SERVER}/api/enrollments`);
         // Fetch enrollments
         const { data: fetchedEnrollments } = await axios.get(`${HTTP_SERVER}/api/enrollments`);
+        console.log("Fetched enrollments:", fetchedEnrollments);
         dispatch(setEnrollments(fetchedEnrollments));
       } catch (error) {
         console.error("Error fetching data:", error);
+        alert("Failed to load courses. Make sure the server is running on localhost:4000");
       }
     };
     fetchData();
@@ -213,7 +218,13 @@ export default function Dashboard() {
         </>
       )}
 
-      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
+      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2>
+      {courses.length === 0 && (
+        <div className="alert alert-info">
+          No courses found. Check console for errors. Make sure server is running on localhost:4000.
+        </div>
+      )}
+      <hr />
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
           {courses
