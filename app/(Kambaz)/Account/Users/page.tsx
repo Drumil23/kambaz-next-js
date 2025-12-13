@@ -76,16 +76,22 @@ export default function Users() {
   }, []);
 
   const createUser = async () => {
-    const user = await client.createUser({
-      firstName: "New",
-      lastName: `User${users.length + 1}`,
-      username: `newuser${Date.now()}`,
-      password: "password123",
-      email: `email${users.length + 1}@neu.edu`,
-      section: "S101",
-      role: "STUDENT",
-    });
-    setUsers([...users, user]);
+    try {
+      const user = await client.createUser({
+        firstName: "New",
+        lastName: `User${users.length + 1}`,
+        username: `newuser${Date.now()}`,
+        password: "password123",
+        email: `email${users.length + 1}@neu.edu`,
+        section: "S101",
+        role: "STUDENT",
+      });
+      setUsers([...users, user]);
+      alert('User created successfully!');
+    } catch (err: unknown) {
+      console.error('Create user failed:', err);
+      alert('Failed to create user. Check console for details.');
+    }
   };
 
   
