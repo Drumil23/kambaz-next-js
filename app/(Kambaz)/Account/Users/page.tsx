@@ -77,7 +77,7 @@ export default function Users() {
 
   const createUser = async () => {
     try {
-      const user = await client.createUser({
+      await client.createUser({
         firstName: "New",
         lastName: `User${users.length + 1}`,
         username: `newuser${Date.now()}`,
@@ -86,7 +86,8 @@ export default function Users() {
         section: "S101",
         role: "STUDENT",
       });
-      setUsers([...users, user]);
+      // Fetch fresh data from MongoDB to ensure UI shows all users
+      await fetchUsers();
       alert('User created successfully!');
     } catch (err: unknown) {
       console.error('Create user failed:', err);
