@@ -6,7 +6,7 @@ import { RootState } from "../store";
 import { enroll, unenroll, setEnrollments } from "../Courses/enrollments/reducer";
 import type { Course } from "../Database/types";
 import { Button, Card, CardBody, CardImg, CardText, CardTitle, Col, Row } from "react-bootstrap";
-import { fetchAllEnrollments, enrollIntoCourse, fetchAllCourses, createCourse as createCourseAPI, deleteCourse as deleteCourseAPI, updateCourse as updateCourseAPI } from "../Courses/client";
+import { fetchAllEnrollments, enrollIntoCourse, unenrollFromCourse, fetchAllCourses, createCourse as createCourseAPI, deleteCourse as deleteCourseAPI, updateCourse as updateCourseAPI } from "../Courses/client";
 export default function Dashboard() {
   const { courses } = useSelector((state: RootState) => state.coursesReducer);
   const dispatch = useDispatch();
@@ -228,6 +228,21 @@ export default function Dashboard() {
                               }
                             }}>
                               Enroll
+                            </Button>
+                          )}
+                          
+                          {currentUser && isEnrolled && (
+                            <Button variant="danger" onClick={async (ev) => { 
+                              ev.preventDefault();
+                              try {
+                                await unenrollFromCourse(currentUser._id!, courseItem._id);
+                                dispatch(unenroll({ user: currentUser._id!, course: courseItem._id }));
+                              } catch (error) {
+                                console.error("Failed to unenroll:", error);
+                                alert("Failed to unenroll from course. Please try again.");
+                              }
+                            }}>
+                              Unenroll
                             </Button>
                           )}
                           

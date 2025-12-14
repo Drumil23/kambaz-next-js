@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ListGroup, ListGroupItem, FormControl } from "react-bootstrap";
 import ModulesControls from "./ModulesControls";
 import { BsGripVertical } from "react-icons/bs";
@@ -22,28 +22,57 @@ export default function Modules() {
   const modules = useSelector((state: RootState) => state.modulesReducer.modules) as UIModule[];
   const [moduleName, setModuleName] = useState("");
   const dispatch = useDispatch();
+  
+  // Fetch modules from database on mount
+  useEffect(() => {
+    const loadModules = async () => {
+      try {
+        const data = await client.findModulesForCourse(cid as string);
+        dispatch(setModules(data));
+      } catch (error) {
+        console.error("Failed to load modules:", error);
+      }
+    };
+    loadModules();
+  }, [cid, dispatch]);
+  
   // wrapper handlers (avoid name collisions with imported action creators)
-  const handleAddModule = () => {
-    dispatch(addModule({ name: moduleName, course: cid as string }));
-    setModuleName("");
+  const handleAddModule = async () => {
+    try {
+      const newModule = await client.createModuleForCourse(cid as string, {
+        name: moduleName,
+        description: "",
+        course: cid as string,
+        lessons: [],
+      });
+      dispatch(addModule(newModule));
+      setModuleName("");
+    } catch (error) {
+      console.error("Failed to add module:", error);
+      alert("Failed to add module. Please try again.");
+    }
   };
-  const handleDeleteModule = (moduleId: string) => {
-    dispatch(deleteModule(moduleId));
+  const handleDeleteModule = async (moduleId: string) => {
+    try {
+      await client.deleteModule(moduleId);
+      dispatch(deleteModule(moduleId));
+    } catch (error) {
+      console.error("Failed to delete module:", error);
+      alert("Failed to delete module. Please try again.");
+    }
   };
   const handleEditModule = (moduleId: string) => {
     dispatch(editModule(moduleId));
   };
-  const handleUpdateModule = (module: UIModule) => {
-    // Strip UI-only `editing` flag at runtime by asserting to Module when dispatching
-    dispatch(updateModule(module as unknown as Module));
-  };
-
-  const onUpdateModule = async (module: UIModule) => {
-    await client.updateModule(cid as string, module as unknown as client.Module);
-    const newModules = modules.map((m: UIModule) =>
-      m._id === module._id ? module : m
-    );
-    dispatch(setModules(newModules as Module[]));
+  const handleUpdateModule = async (module: UIModule) => {
+    try {
+      await client.updateModule(cid as string, module as unknown as client.Module);
+      // Strip UI-only `editing` flag at runtime by asserting to Module when dispatching
+      dispatch(updateModule(module as unknown as Module));
+    } catch (error) {
+      console.error("Failed to update module:", error);
+      alert("Failed to update module. Please try again.");
+    }
   };
 
 
