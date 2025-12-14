@@ -166,16 +166,13 @@ export default function Dashboard() {
                             Delete
                           </Button>
                           
-                          {currentUser && (
-                            isEnrolled ? (
-                              <Button variant="danger" onClick={(ev) => { ev.preventDefault(); dispatch(unenroll({ user: currentUser._id!, course: courseItem._id })); }}>
-                                Unenroll
-                              </Button>
-                            ) : (
-                              <Button variant="success" onClick={(ev) => { ev.preventDefault(); dispatch(enroll({ user: currentUser._id!, course: courseItem._id })); }}>
-                                Enroll
-                              </Button>
-                            )
+                          {currentUser && !isEnrolled && (
+                            <Button variant="success" onClick={(ev) => { 
+                              ev.preventDefault(); 
+                              dispatch(enroll({ user: currentUser._id!, course: courseItem._id })); 
+                            }}>
+                              Enroll
+                            </Button>
                           )}
                           
                           <Button id="wd-edit-course-click"
