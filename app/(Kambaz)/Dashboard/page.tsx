@@ -1,12 +1,12 @@
 "use client"
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewCourse, deleteCourse, updateCourse } from "../Courses/reducer";
+import { addNewCourse, deleteCourse, updateCourse, setCourses } from "../Courses/reducer";
 import { RootState } from "../store";
 import { enroll, unenroll, setEnrollments } from "../Courses/enrollments/reducer";
 import type { Course } from "../Database/types";
 import { Button, Card, CardBody, CardImg, CardText, CardTitle, Col, Row } from "react-bootstrap";
-import { fetchAllEnrollments, enrollIntoCourse } from "../Courses/client";
+import { fetchAllEnrollments, enrollIntoCourse, fetchAllCourses, createCourse as createCourseAPI, deleteCourse as deleteCourseAPI, updateCourse as updateCourseAPI } from "../Courses/client";
 export default function Dashboard() {
   const { courses } = useSelector((state: RootState) => state.coursesReducer);
   const dispatch = useDispatch();
@@ -24,6 +24,19 @@ export default function Dashboard() {
   const enrollments = useSelector((state: RootState) => state.enrollmentsReducer.enrollments);
   const [showAll, setShowAll] = useState(false);
   
+  // Fetch courses from database on mount
+  useEffect(() => {
+    const loadCourses = async () => {
+      try {
+        const data = await fetchAllCourses();
+        dispatch(setCourses(data));
+      } catch (error) {
+        console.error("Failed to load courses:", error);
+      }
+    };
+    loadCourses();
+  }, [dispatch]);
+
   // Fetch enrollments from database on mount
   useEffect(() => {
     const loadEnrollments = async () => {
@@ -77,11 +90,27 @@ export default function Dashboard() {
             <button
               className="btn btn-primary mb-2"
               id="wd-add-new-course-click"
-              onClick={() => dispatch(addNewCourse(course))}
+              onClick={async () => {
+                try {
+                  const newCourse = await createCourseAPI(course);
+                  dispatch(addNewCourse(newCourse));
+                } catch (error) {
+                  console.error("Failed to create course:", error);
+                  alert("Failed to create course. Please try again.");
+                }
+              }}
             >
               Add
             </button>
-            <button className="btn btn-warning" id="wd-update-course-click" onClick={() => dispatch(updateCourse(course))}>
+            <button className="btn btn-warning" id="wd-update-course-click" onClick={async () => {
+              try {
+                await updateCourseAPI(course as any);
+                dispatch(updateCourse(course as any));
+              } catch (error) {
+                console.error("Failed to update course:", error);
+                alert("Failed to update course. Please try again.");
+              }
+            }}>
               Update
             </button>
           </div>
@@ -173,9 +202,15 @@ export default function Dashboard() {
                             else alert('You must be enrolled in the course to open it.');
                           }}> Go </Button>
                           
-                          <Button onClick={(event) => {
+                          <Button onClick={async (event) => {
                             event.preventDefault();
-                            dispatch(deleteCourse(courseItem._id));
+                            try {
+                              await deleteCourseAPI(courseItem._id);
+                              dispatch(deleteCourse(courseItem._id));
+                            } catch (error) {
+                              console.error("Failed to delete course:", error);
+                              alert("Failed to delete course. Please try again.");
+                            }
                           }} className="btn btn-danger"
                             id="wd-delete-course-click">
                             Delete
