@@ -4,6 +4,7 @@ import { HTTP_SERVER } from "../../lib/config";
 const axiosWithCredentials = axios.create({ withCredentials: true });
 const COURSES_API = `${HTTP_SERVER}/api/courses`;
 const USERS_API = `${HTTP_SERVER}/api/users`;
+const ENROLLMENTS_API = `${HTTP_SERVER}/api/enrollments`;
 
 export const fetchAllCourses = async () => {
   const { data } = await axios.get(COURSES_API);
@@ -27,6 +28,11 @@ export interface Course {
 export const updateCourse = async (course: Course) => {
   const { data } = await axios.put(`${COURSES_API}/${course._id}`, course);
   return data;
+};
+
+export const fetchAllEnrollments = async () => {
+  const response = await axiosWithCredentials.get(ENROLLMENTS_API);
+  return response.data;
 };
 
 export const enrollIntoCourse = async (userId: string, courseId: string) => {

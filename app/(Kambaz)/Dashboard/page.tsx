@@ -3,9 +3,10 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewCourse, deleteCourse, updateCourse } from "../Courses/reducer";
 import { RootState } from "../store";
-import { enroll, unenroll } from "../Courses/enrollments/reducer";
+import { enroll, unenroll, setEnrollments } from "../Courses/enrollments/reducer";
 import type { Course } from "../Database/types";
 import { Button, Card, CardBody, CardImg, CardText, CardTitle, Col, Row } from "react-bootstrap";
+import { fetchAllEnrollments, enrollIntoCourse } from "../Courses/client";
 export default function Dashboard() {
   const { courses } = useSelector((state: RootState) => state.coursesReducer);
   const dispatch = useDispatch();
@@ -22,6 +23,20 @@ export default function Dashboard() {
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
   const enrollments = useSelector((state: RootState) => state.enrollmentsReducer.enrollments);
   const [showAll, setShowAll] = useState(false);
+  
+  // Fetch enrollments from database on mount
+  useEffect(() => {
+    const loadEnrollments = async () => {
+      try {
+        const data = await fetchAllEnrollments();
+        dispatch(setEnrollments(data));
+      } catch (error) {
+        console.error("Failed to load enrollments:", error);
+      }
+    };
+    loadEnrollments();
+  }, [dispatch]);
+  
   // read query param on the client to avoid SSR/CSR bailout warning for useSearchParams
   useEffect(() => {
     try {
@@ -167,9 +182,15 @@ export default function Dashboard() {
                           </Button>
                           
                           {currentUser && !isEnrolled && (
-                            <Button variant="success" onClick={(ev) => { 
-                              ev.preventDefault(); 
-                              dispatch(enroll({ user: currentUser._id!, course: courseItem._id })); 
+                            <Button variant="success" onClick={async (ev) => { 
+                              ev.preventDefault();
+                              try {
+                                await enrollIntoCourse(currentUser._id!, courseItem._id);
+                                dispatch(enroll({ user: currentUser._id!, course: courseItem._id }));
+                              } catch (error) {
+                                console.error("Failed to enroll:", error);
+                                alert("Failed to enroll in course. Please try again.");
+                              }
                             }}>
                               Enroll
                             </Button>
